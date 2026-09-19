@@ -86,17 +86,50 @@ python -m propertyroi test --data path/to/your_labeled.json --json
 Labeled data format (`data/eval_labeled.json`): each record is a listing plus an
 `actual_rent` field.
 
-## Using real data (RentCast)
+## Using real data (Zillow, Realtor.com, RentCast)
+
+> **Note on Zillow & Realtor.com.** Neither offers a free public listings API
+> (Zillow retired its public API), and scraping their sites directly violates
+> their Terms of Service and is actively blocked. The supported way to get their
+> data programmatically is through third-party **RapidAPI** marketplace
+> endpoints that mirror them, which require your own API key. PropertyROI does
+> **not** scrape — these providers call those APIs.
 
 ```bash
+# Zillow or Realtor.com via RapidAPI
+export RAPIDAPI_KEY=your_rapidapi_key
+python -m propertyroi scan --zip 78704 --provider zillow
+python -m propertyroi scan --zip 78704 --provider realtor
+
+# Pull from BOTH at once, merged and de-duplicated
+python -m propertyroi scan --zip 78704 --provider combined
+
+# RentCast (separate key)
 export RENTCAST_API_KEY=your_key
 python -m propertyroi scan --zip 78704 --provider rentcast
 ```
 
-`RentCastProvider` maps RentCast's sale and long-term rental listings onto the
-same models, so the estimator, analyzer, and tester all work unchanged. Any
-provider implementing `propertyroi.providers.base.DataProvider` can be swapped
-in.
+Each provider maps its source's sale and rental listings onto the same models,
+so the estimator, analyzer, and tester all work unchanged. Any provider
+implementing `propertyroi.providers.base.DataProvider` can be swapped in.
+
+### Configuring the RapidAPI hosts
+
+RapidAPI hosts many Zillow/Realtor listings with slightly different response
+shapes. The defaults target common ones (`zillow-com1.p.rapidapi.com`,
+`us-real-estate.p.rapidapi.com`); override via env vars if you subscribed to a
+different listing:
+
+| Variable | Purpose | Default |
+|---|---|---|
+| `RAPIDAPI_KEY` | Your RapidAPI key (Zillow + Realtor) | — |
+| `ZILLOW_RAPIDAPI_HOST` | Zillow host | `zillow-com1.p.rapidapi.com` |
+| `REALTOR_RAPIDAPI_HOST` | Realtor host | `us-real-estate.p.rapidapi.com` |
+| `REALTOR_SALE_PATH` | Realtor for-sale path | `v2/for-sale` |
+| `REALTOR_RENT_PATH` | Realtor for-rent path | `v2/for-rent` |
+
+The Realtor provider parses several common nesting shapes defensively, so minor
+schema differences between listings do not break it.
 
 ## Programmatic use
 
@@ -117,7 +150,7 @@ propertyroi/
   analyzer.py        # ROI metrics + deal ranking
   tester.py          # accuracy evaluator (leave-one-out)
   cli.py             # `python -m propertyroi` commands: scan / analyze / test
-  providers/         # JsonProvider (default), RentCastProvider (live)
+  providers/         # JsonProvider (default), Zillow/Realtor/RentCast (live), CombinedProvider
 data/                # sample listings, comps, labeled eval set
 tests/               # unittest suite (run: python -m unittest discover -s tests)
 ```

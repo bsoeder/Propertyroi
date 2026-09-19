@@ -13,6 +13,13 @@ Examples
 
     # Use live RentCast data (needs RENTCAST_API_KEY)
     python -m propertyroi scan --zip 78704 --provider rentcast
+
+    # Pull live data from Zillow or Realtor.com (needs RAPIDAPI_KEY)
+    python -m propertyroi scan --zip 78704 --provider zillow
+    python -m propertyroi scan --zip 78704 --provider realtor
+
+    # Pull from Zillow AND Realtor.com at once, merged + de-duplicated
+    python -m propertyroi scan --zip 78704 --provider combined
 """
 
 from __future__ import annotations
@@ -35,7 +42,25 @@ def _make_provider(name: str):
         from .providers.rentcast import RentCastProvider
 
         return RentCastProvider()
+    if name == "zillow":
+        from .providers.zillow import ZillowProvider
+
+        return ZillowProvider()
+    if name == "realtor":
+        from .providers.realtor import RealtorProvider
+
+        return RealtorProvider()
+    if name == "combined":
+        # Pull from Zillow + Realtor at once (both need RAPIDAPI_KEY).
+        from .providers.combined import CombinedProvider
+        from .providers.realtor import RealtorProvider
+        from .providers.zillow import ZillowProvider
+
+        return CombinedProvider([ZillowProvider(), RealtorProvider()])
     raise SystemExit(f"Unknown provider: {name}")
+
+
+_PROVIDER_CHOICES = ["json", "rentcast", "zillow", "realtor", "combined"]
 
 
 def _fmt_analysis_row(a) -> str:
@@ -52,7 +77,11 @@ def _fmt_analysis_row(a) -> str:
 
 
 def cmd_scan(args) -> int:
-    provider = _make_provider(args.provider)
+    try:
+        provider = _make_provider(args.provider)
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
     analyzer = Analyzer(provider, RentEstimator(), _assumptions_from_args(args))
     deals = analyzer.find_deals(
         zip_code=args.zip,
@@ -76,7 +105,11 @@ def cmd_scan(args) -> int:
 
 
 def cmd_analyze(args) -> int:
-    provider = _make_provider(args.provider)
+    try:
+        provider = _make_provider(args.provider)
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
     analyzer = Analyzer(provider, RentEstimator(), _assumptions_from_args(args))
     listings = provider.search_listings(zip_code=args.zip)
     match = next((l for l in listings if l.id == args.id), None)
@@ -141,8 +174,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="command", required=True)
 
     def add_common(sp):
-        sp.add_argument("--provider", default="json", choices=["json", "rentcast"],
-                        help="data source (default: bundled sample JSON)")
+        sp.add_argument("--provider", default="json", choices=_PROVIDER_CHOICES,
+                        help="data source (default: bundled sample JSON; "
+                             "zillow/realtor/combined need RAPIDAPI_KEY)")
         sp.add_argument("--down", type=float, help="down payment fraction, e.g. 0.25")
         sp.add_argument("--rate", type=float, help="mortgage annual rate, e.g. 0.07")
         sp.add_argument("--json", action="store_true", help="output raw JSON")

@@ -2,13 +2,19 @@
 
 from .base import DataProvider
 from .json_provider import JsonProvider
+from .combined import CombinedProvider
 
-__all__ = ["DataProvider", "JsonProvider"]
+__all__ = ["DataProvider", "JsonProvider", "CombinedProvider"]
 
-# RentCastProvider is imported lazily to avoid requiring an API key at import time.
-try:  # pragma: no cover - optional import
-    from .rentcast import RentCastProvider  # noqa: F401
-
-    __all__.append("RentCastProvider")
-except Exception:  # pragma: no cover
-    pass
+# Live providers are imported lazily so a missing API key never breaks import.
+for _name, _mod, _cls in (
+    ("RentCastProvider", ".rentcast", "RentCastProvider"),
+    ("ZillowProvider", ".zillow", "ZillowProvider"),
+    ("RealtorProvider", ".realtor", "RealtorProvider"),
+):
+    try:  # pragma: no cover - optional imports
+        _module = __import__(f"propertyroi.providers{_mod}", fromlist=[_cls])
+        globals()[_name] = getattr(_module, _cls)
+        __all__.append(_name)
+    except Exception:  # pragma: no cover
+        pass
