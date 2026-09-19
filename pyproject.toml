@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "propertyroi"
+version = "0.1.0"
+description = "Find for-sale properties, estimate rental potential from comps, rank by ROI, and measure estimator accuracy."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "PropertyROI contributors" }]
+keywords = ["real-estate", "rental", "investment", "roi", "cap-rate", "cash-flow"]
+dependencies = []  # standard library only
+
+[project.scripts]
+propertyroi = "propertyroi.cli:main"
+
+[project.optional-dependencies]
+dev = []
+
+[tool.setuptools]
+packages = ["propertyroi", "propertyroi.providers"]
+
+[tool.setuptools.package-data]
+propertyroi = []

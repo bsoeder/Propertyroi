@@ -1,0 +1,135 @@
+# PropertyROI
+
+Find for-sale properties, estimate their **rental potential** from comparable
+rental data, rank them by return on investment — and **measure how accurate the
+rent estimator is** with a built-in tester.
+
+Pure Python standard library. No dependencies, no API keys, runs offline against
+bundled sample data. An optional live provider (RentCast) is included for real
+data.
+
+## What it does
+
+1. **Explore for-sale listings** filtered by ZIP, price, beds, and type.
+2. **Estimate rent** for each listing from nearby rental comps using a
+   transparent, explainable comps model (no black box).
+3. **Analyze rental potential** — gross yield, cap rate, cash flow,
+   cash-on-cash return, the 1% rule — and produce a single 0–100 ROI score.
+4. **Rank deals** best-first so good rentals rise to the top.
+5. **Evaluate accuracy** of the rent estimator against labeled ground-truth
+   rents (MAE, RMSE, MAPE, R², within-X% hit rates).
+
+## Quick start
+
+```bash
+# Rank rental deals in a ZIP (bundled sample data)
+python -m propertyroi scan --zip 44107 --limit 5
+
+# Deep-dive a single listing
+python -m propertyroi analyze --id L1019
+
+# Measure the rent estimator's accuracy
+python -m propertyroi test --verbose
+```
+
+Example scan output:
+
+```
+score  id       price          size          est. rent          cap      CoC      cash flow
+ 79.6  L1019   $   157,000  3bd/2ba  1704sf  rent~$ 1,970(conf 0.88)  cap  8.2%  CoC   7.9%  cf $ 289/mo 1%  44107
+```
+
+Example accuracy report (bundled data):
+
+```
+MAE                   : $191/mo
+MAPE                  : 7.7%
+R^2                   : 0.927
+Within 10%            : 72%
+```
+
+## How rent is estimated
+
+For a subject property the estimator:
+
+1. selects rental comps in the same area (coordinates when available, else same
+   ZIP) within a bedroom tolerance;
+2. weights each comp by similarity (beds, baths, sqft, type, distance) via a
+   Gaussian of feature distance;
+3. adjusts each comp's rent toward the subject by blending a $/sqft-scaled rent
+   with the comp's whole-unit rent, plus a small bedroom nudge;
+4. returns a similarity-weighted rent, a low–high band from the weighted spread,
+   and a confidence score (more/closer/tighter comps → higher confidence).
+
+See `propertyroi/estimator.py`.
+
+## How ROI is computed
+
+`propertyroi/analyzer.py` turns rent + price into investor metrics using explicit
+assumptions (`Assumptions`): down payment, mortgage rate/term, vacancy, operating
+expense ratio, taxes, closing costs. It reports gross yield, NOI, cap rate,
+monthly/annual cash flow, cash-on-cash return, the 1% rule, and a composite
+score. Tune assumptions from the CLI (`--down`, `--rate`) or in code.
+
+## The accuracy tester
+
+`propertyroi/tester.py` runs **leave-one-out** evaluation: each labeled property
+is priced using every *other* labeled property as a comp, then predictions are
+compared to actual rents. Metrics: MAE, RMSE, MAPE, median APE, R², bias, and
+within-5/10/20% hit rates, plus coverage. This lets you quantify quality and
+track it as you change the algorithm or plug in real data.
+
+```bash
+python -m propertyroi test --data path/to/your_labeled.json --json
+```
+
+Labeled data format (`data/eval_labeled.json`): each record is a listing plus an
+`actual_rent` field.
+
+## Using real data (RentCast)
+
+```bash
+export RENTCAST_API_KEY=your_key
+python -m propertyroi scan --zip 78704 --provider rentcast
+```
+
+`RentCastProvider` maps RentCast's sale and long-term rental listings onto the
+same models, so the estimator, analyzer, and tester all work unchanged. Any
+provider implementing `propertyroi.providers.base.DataProvider` can be swapped
+in.
+
+## Programmatic use
+
+```python
+from propertyroi import Analyzer, JsonProvider, RentEstimator, Assumptions
+
+analyzer = Analyzer(JsonProvider(), RentEstimator(), Assumptions(down_payment_pct=0.20))
+for deal in analyzer.find_deals(zip_code="44107", limit=5):
+    print(deal.listing.id, deal.score, deal.cap_rate, deal.monthly_cash_flow)
+```
+
+## Project layout
+
+```
+propertyroi/
+  models.py          # dataclasses: Listing, RentalComp, RentEstimate, InvestmentAnalysis
+  estimator.py       # comps-based rent estimation
+  analyzer.py        # ROI metrics + deal ranking
+  tester.py          # accuracy evaluator (leave-one-out)
+  cli.py             # `python -m propertyroi` commands: scan / analyze / test
+  providers/         # JsonProvider (default), RentCastProvider (live)
+data/                # sample listings, comps, labeled eval set
+tests/               # unittest suite (run: python -m unittest discover -s tests)
+```
+
+## Tests
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## Disclaimer
+
+Estimates and scores are a transparent model for research and comparison, **not
+investment, financial, or appraisal advice**. Always verify with local data and
+professionals before making decisions.

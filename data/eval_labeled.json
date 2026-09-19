@@ -1,0 +1,1022 @@
+[
+  {
+    "id": "E5000",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22873,
+      "longitude": -97.74631
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1587,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 3875,
+    "address": "7660 Test Blvd"
+  },
+  {
+    "id": "E5001",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.24494,
+      "longitude": -97.75734
+    },
+    "beds": 2,
+    "baths": 3,
+    "sqft": 1312,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 2675,
+    "address": "4579 Test Blvd"
+  },
+  {
+    "id": "E5002",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.24034,
+      "longitude": -97.74913
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1948,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 3925,
+    "address": "2336 Test Blvd"
+  },
+  {
+    "id": "E5003",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.2386,
+      "longitude": -97.75449
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1081,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 2375,
+    "address": "142 Test Blvd"
+  },
+  {
+    "id": "E5004",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25961,
+      "longitude": -97.76814
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1370,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 3175,
+    "address": "5546 Test Blvd"
+  },
+  {
+    "id": "E5005",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.24321,
+      "longitude": -97.77313
+    },
+    "beds": 5,
+    "baths": 2.5,
+    "sqft": 2403,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 5200,
+    "address": "4012 Test Blvd"
+  },
+  {
+    "id": "E5006",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25479,
+      "longitude": -97.75779
+    },
+    "beds": 4,
+    "baths": 1.5,
+    "sqft": 1927,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 4175,
+    "address": "6425 Test Blvd"
+  },
+  {
+    "id": "E5007",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.23005,
+      "longitude": -97.74739
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 938,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 1975,
+    "address": "1744 Test Blvd"
+  },
+  {
+    "id": "E5008",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.2414,
+      "longitude": -97.75981
+    },
+    "beds": 4,
+    "baths": 1,
+    "sqft": 1581,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 3025,
+    "address": "7792 Test Blvd"
+  },
+  {
+    "id": "E5009",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25099,
+      "longitude": -97.75193
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1414,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 3425,
+    "address": "8842 Test Blvd"
+  },
+  {
+    "id": "E5010",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.2599,
+      "longitude": -97.78456
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1507,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 3250,
+    "address": "4808 Test Blvd"
+  },
+  {
+    "id": "E5011",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.24236,
+      "longitude": -97.78206
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1151,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 2600,
+    "address": "1746 Test Blvd"
+  },
+  {
+    "id": "E5012",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.20297,
+      "longitude": -97.80776
+    },
+    "beds": 4,
+    "baths": 1.5,
+    "sqft": 1650,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 2950,
+    "address": "7156 Test Blvd"
+  },
+  {
+    "id": "E5013",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.21264,
+      "longitude": -97.7783
+    },
+    "beds": 2,
+    "baths": 1.5,
+    "sqft": 694,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 1350,
+    "address": "1393 Test Blvd"
+  },
+  {
+    "id": "E5014",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19929,
+      "longitude": -97.78448
+    },
+    "beds": 4,
+    "baths": 2.5,
+    "sqft": 1704,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 3000,
+    "address": "253 Test Blvd"
+  },
+  {
+    "id": "E5015",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19295,
+      "longitude": -97.77219
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1585,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 3025,
+    "address": "5001 Test Blvd"
+  },
+  {
+    "id": "E5016",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22997,
+      "longitude": -97.77587
+    },
+    "beds": 4,
+    "baths": 3,
+    "sqft": 1799,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 2975,
+    "address": "6348 Test Blvd"
+  },
+  {
+    "id": "E5017",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22971,
+      "longitude": -97.79819
+    },
+    "beds": 3,
+    "baths": 2.5,
+    "sqft": 1836,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 3500,
+    "address": "6584 Test Blvd"
+  },
+  {
+    "id": "E5018",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22642,
+      "longitude": -97.78019
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1171,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 2275,
+    "address": "4789 Test Blvd"
+  },
+  {
+    "id": "E5019",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19876,
+      "longitude": -97.80239
+    },
+    "beds": 3,
+    "baths": 2.5,
+    "sqft": 1327,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 2325,
+    "address": "2340 Test Blvd"
+  },
+  {
+    "id": "E5020",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19133,
+      "longitude": -97.79541
+    },
+    "beds": 2,
+    "baths": 3,
+    "sqft": 995,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 1900,
+    "address": "4935 Test Blvd"
+  },
+  {
+    "id": "E5021",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19703,
+      "longitude": -97.80471
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1313,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 2650,
+    "address": "6094 Test Blvd"
+  },
+  {
+    "id": "E5022",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22656,
+      "longitude": -97.77223
+    },
+    "beds": 5,
+    "baths": 2.5,
+    "sqft": 2472,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 4725,
+    "address": "4935 Test Blvd"
+  },
+  {
+    "id": "E5023",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22852,
+      "longitude": -97.80437
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1255,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 2650,
+    "address": "6611 Test Blvd"
+  },
+  {
+    "id": "E5024",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.17946,
+      "longitude": -86.73681
+    },
+    "beds": 5,
+    "baths": 2,
+    "sqft": 2318,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 4000,
+    "address": "4395 Test Blvd"
+  },
+  {
+    "id": "E5025",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.16233,
+      "longitude": -86.74565
+    },
+    "beds": 4,
+    "baths": 3,
+    "sqft": 1907,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 3000,
+    "address": "9298 Test Blvd"
+  },
+  {
+    "id": "E5026",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.19438,
+      "longitude": -86.74291
+    },
+    "beds": 3,
+    "baths": 2.5,
+    "sqft": 1462,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 2675,
+    "address": "2390 Test Blvd"
+  },
+  {
+    "id": "E5027",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.19784,
+      "longitude": -86.75036
+    },
+    "beds": 1,
+    "baths": 1,
+    "sqft": 821,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 1300,
+    "address": "8907 Test Blvd"
+  },
+  {
+    "id": "E5028",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.18149,
+      "longitude": -86.72594
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 814,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 1650,
+    "address": "1722 Test Blvd"
+  },
+  {
+    "id": "E5029",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.19556,
+      "longitude": -86.74381
+    },
+    "beds": 4,
+    "baths": 2.5,
+    "sqft": 1885,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 3600,
+    "address": "3659 Test Blvd"
+  },
+  {
+    "id": "E5030",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.19724,
+      "longitude": -86.74031
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 2174,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 3925,
+    "address": "5976 Test Blvd"
+  },
+  {
+    "id": "E5031",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.16559,
+      "longitude": -86.75011
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 629,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 1150,
+    "address": "7550 Test Blvd"
+  },
+  {
+    "id": "E5032",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.16002,
+      "longitude": -86.74166
+    },
+    "beds": 2,
+    "baths": 3,
+    "sqft": 1167,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 2200,
+    "address": "9350 Test Blvd"
+  },
+  {
+    "id": "E5033",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.18146,
+      "longitude": -86.72248
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1727,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 2650,
+    "address": "2517 Test Blvd"
+  },
+  {
+    "id": "E5034",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.17961,
+      "longitude": -86.72306
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 820,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 1275,
+    "address": "522 Test Blvd"
+  },
+  {
+    "id": "E5035",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.1896,
+      "longitude": -86.74548
+    },
+    "beds": 2,
+    "baths": 1,
+    "sqft": 1013,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 1650,
+    "address": "2954 Test Blvd"
+  },
+  {
+    "id": "E5036",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.49183,
+      "longitude": -81.79995
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1596,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 1975,
+    "address": "8508 Test Blvd"
+  },
+  {
+    "id": "E5037",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.49982,
+      "longitude": -81.81727
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1249,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 1500,
+    "address": "8643 Test Blvd"
+  },
+  {
+    "id": "E5038",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.49589,
+      "longitude": -81.80195
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1418,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 1750,
+    "address": "7367 Test Blvd"
+  },
+  {
+    "id": "E5039",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.48633,
+      "longitude": -81.81637
+    },
+    "beds": 2,
+    "baths": 1,
+    "sqft": 1060,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 1200,
+    "address": "9690 Test Blvd"
+  },
+  {
+    "id": "E5040",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.48015,
+      "longitude": -81.79478
+    },
+    "beds": 5,
+    "baths": 3,
+    "sqft": 1855,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 2175,
+    "address": "1974 Test Blvd"
+  },
+  {
+    "id": "E5041",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.4792,
+      "longitude": -81.78348
+    },
+    "beds": 5,
+    "baths": 3,
+    "sqft": 2725,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 3100,
+    "address": "7530 Test Blvd"
+  },
+  {
+    "id": "E5042",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.4886,
+      "longitude": -81.80403
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1777,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 2025,
+    "address": "7870 Test Blvd"
+  },
+  {
+    "id": "E5043",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.46573,
+      "longitude": -81.81514
+    },
+    "beds": 2,
+    "baths": 1,
+    "sqft": 928,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 1175,
+    "address": "2231 Test Blvd"
+  },
+  {
+    "id": "E5044",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.4888,
+      "longitude": -81.80257
+    },
+    "beds": 5,
+    "baths": 1,
+    "sqft": 1930,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 2475,
+    "address": "7029 Test Blvd"
+  },
+  {
+    "id": "E5045",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47607,
+      "longitude": -81.79588
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 617,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 750,
+    "address": "8000 Test Blvd"
+  },
+  {
+    "id": "E5046",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.4925,
+      "longitude": -81.79604
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1299,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 1650,
+    "address": "9290 Test Blvd"
+  },
+  {
+    "id": "E5047",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.46316,
+      "longitude": -81.80807
+    },
+    "beds": 5,
+    "baths": 1,
+    "sqft": 2356,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 2875,
+    "address": "5667 Test Blvd"
+  },
+  {
+    "id": "E5048",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.70778,
+      "longitude": -84.40836
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1496,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 2400,
+    "address": "1603 Test Blvd"
+  },
+  {
+    "id": "E5049",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.72179,
+      "longitude": -84.42436
+    },
+    "beds": 5,
+    "baths": 1.5,
+    "sqft": 2251,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 3325,
+    "address": "5414 Test Blvd"
+  },
+  {
+    "id": "E5050",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.73196,
+      "longitude": -84.42712
+    },
+    "beds": 2,
+    "baths": 1,
+    "sqft": 1287,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 1825,
+    "address": "8057 Test Blvd"
+  },
+  {
+    "id": "E5051",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.71362,
+      "longitude": -84.41751
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 2077,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 2800,
+    "address": "1916 Test Blvd"
+  },
+  {
+    "id": "E5052",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.70682,
+      "longitude": -84.42219
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1349,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 1975,
+    "address": "225 Test Blvd"
+  },
+  {
+    "id": "E5053",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.73569,
+      "longitude": -84.40743
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1241,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 1675,
+    "address": "2065 Test Blvd"
+  },
+  {
+    "id": "E5054",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.7263,
+      "longitude": -84.4288
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 747,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 1150,
+    "address": "5902 Test Blvd"
+  },
+  {
+    "id": "E5055",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.72245,
+      "longitude": -84.41961
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 975,
+    "property_type": "single_family",
+    "price": 0,
+    "actual_rent": 1325,
+    "address": "5229 Test Blvd"
+  },
+  {
+    "id": "E5056",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.70961,
+      "longitude": -84.43717
+    },
+    "beds": 4,
+    "baths": 2.5,
+    "sqft": 1564,
+    "property_type": "townhouse",
+    "price": 0,
+    "actual_rent": 2200,
+    "address": "7638 Test Blvd"
+  },
+  {
+    "id": "E5057",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.73878,
+      "longitude": -84.42827
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1611,
+    "property_type": "multi_family",
+    "price": 0,
+    "actual_rent": 2425,
+    "address": "8684 Test Blvd"
+  },
+  {
+    "id": "E5058",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.71832,
+      "longitude": -84.43127
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1327,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 1775,
+    "address": "1968 Test Blvd"
+  },
+  {
+    "id": "E5059",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.74124,
+      "longitude": -84.42402
+    },
+    "beds": 5,
+    "baths": 2.5,
+    "sqft": 1909,
+    "property_type": "condo",
+    "price": 0,
+    "actual_rent": 2775,
+    "address": "2519 Test Blvd"
+  }
+]

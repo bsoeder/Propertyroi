@@ -1,0 +1,542 @@
+[
+  {
+    "id": "L1000",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25517,
+      "longitude": -97.74802
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1906,
+    "property_type": "single_family",
+    "price": 542000,
+    "year_built": 1957,
+    "address": "2596 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1001",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25178,
+      "longitude": -97.76344
+    },
+    "beds": 3,
+    "baths": 1.5,
+    "sqft": 1659,
+    "property_type": "multi_family",
+    "price": 509000,
+    "year_built": 1987,
+    "address": "6143 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1002",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25611,
+      "longitude": -97.77945
+    },
+    "beds": 2,
+    "baths": 2.5,
+    "sqft": 840,
+    "property_type": "single_family",
+    "price": 266000,
+    "year_built": 1958,
+    "address": "5211 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1003",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22804,
+      "longitude": -97.75838
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1592,
+    "property_type": "condo",
+    "price": 546000,
+    "year_built": 1968,
+    "address": "5041 Market Ave",
+    "hoa_monthly": 250
+  },
+  {
+    "id": "L1004",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25146,
+      "longitude": -97.78324
+    },
+    "beds": 2,
+    "baths": 2.5,
+    "sqft": 1137,
+    "property_type": "multi_family",
+    "price": 441000,
+    "year_built": 1956,
+    "address": "6982 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1005",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.26343,
+      "longitude": -97.76058
+    },
+    "beds": 4,
+    "baths": 1,
+    "sqft": 1619,
+    "property_type": "multi_family",
+    "price": 672000,
+    "year_built": 1974,
+    "address": "7235 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1006",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.20859,
+      "longitude": -97.77697
+    },
+    "beds": 2,
+    "baths": 3,
+    "sqft": 812,
+    "property_type": "multi_family",
+    "price": 249000,
+    "year_built": 1996,
+    "address": "4122 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1007",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19975,
+      "longitude": -97.79141
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1060,
+    "property_type": "multi_family",
+    "price": 310000,
+    "year_built": 2003,
+    "address": "5611 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1008",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.20419,
+      "longitude": -97.79967
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 825,
+    "property_type": "condo",
+    "price": 181000,
+    "year_built": 1990,
+    "address": "9206 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1009",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19965,
+      "longitude": -97.79374
+    },
+    "beds": 5,
+    "baths": 1.5,
+    "sqft": 2047,
+    "property_type": "single_family",
+    "price": 542000,
+    "year_built": 1985,
+    "address": "7900 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1010",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.20618,
+      "longitude": -97.80027
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1823,
+    "property_type": "condo",
+    "price": 484000,
+    "year_built": 2002,
+    "address": "7853 Market Ave",
+    "hoa_monthly": 250
+  },
+  {
+    "id": "L1011",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22987,
+      "longitude": -97.78798
+    },
+    "beds": 5,
+    "baths": 2,
+    "sqft": 2064,
+    "property_type": "multi_family",
+    "price": 533000,
+    "year_built": 2013,
+    "address": "4538 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1012",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.16278,
+      "longitude": -86.73357
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1488,
+    "property_type": "townhouse",
+    "price": 387000,
+    "year_built": 1978,
+    "address": "3238 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1013",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.19722,
+      "longitude": -86.72169
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 2117,
+    "property_type": "townhouse",
+    "price": 436000,
+    "year_built": 2001,
+    "address": "3039 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1014",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.18013,
+      "longitude": -86.7271
+    },
+    "beds": 1,
+    "baths": 3,
+    "sqft": 593,
+    "property_type": "single_family",
+    "price": 123000,
+    "year_built": 2017,
+    "address": "1780 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1015",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.17678,
+      "longitude": -86.73738
+    },
+    "beds": 1,
+    "baths": 2.5,
+    "sqft": 715,
+    "property_type": "townhouse",
+    "price": 145000,
+    "year_built": 1961,
+    "address": "4236 Market Ave",
+    "hoa_monthly": 150
+  },
+  {
+    "id": "L1016",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.16407,
+      "longitude": -86.72255
+    },
+    "beds": 2,
+    "baths": 1,
+    "sqft": 1036,
+    "property_type": "single_family",
+    "price": 293000,
+    "year_built": 1965,
+    "address": "4166 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1017",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.18225,
+      "longitude": -86.72337
+    },
+    "beds": 2,
+    "baths": 2.5,
+    "sqft": 1145,
+    "property_type": "multi_family",
+    "price": 254000,
+    "year_built": 2021,
+    "address": "6332 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1018",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47422,
+      "longitude": -81.79416
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1721,
+    "property_type": "multi_family",
+    "price": 230000,
+    "year_built": 1967,
+    "address": "3504 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1019",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.46828,
+      "longitude": -81.81205
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1704,
+    "property_type": "single_family",
+    "price": 157000,
+    "year_built": 1955,
+    "address": "6793 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1020",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47352,
+      "longitude": -81.80769
+    },
+    "beds": 4,
+    "baths": 3,
+    "sqft": 1662,
+    "property_type": "condo",
+    "price": 228000,
+    "year_built": 1964,
+    "address": "3924 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1021",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.48378,
+      "longitude": -81.79309
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1357,
+    "property_type": "single_family",
+    "price": 194000,
+    "year_built": 1973,
+    "address": "1269 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1022",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47957,
+      "longitude": -81.80025
+    },
+    "beds": 1,
+    "baths": 1.5,
+    "sqft": 821,
+    "property_type": "townhouse",
+    "price": 84000,
+    "year_built": 2006,
+    "address": "4560 Market Ave",
+    "hoa_monthly": 250
+  },
+  {
+    "id": "L1023",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.46522,
+      "longitude": -81.81741
+    },
+    "beds": 5,
+    "baths": 2,
+    "sqft": 1890,
+    "property_type": "multi_family",
+    "price": 235000,
+    "year_built": 1996,
+    "address": "9991 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1024",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.74498,
+      "longitude": -84.41111
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1879,
+    "property_type": "single_family",
+    "price": 260000,
+    "year_built": 1960,
+    "address": "2970 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1025",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.74164,
+      "longitude": -84.43074
+    },
+    "beds": 4,
+    "baths": 2.5,
+    "sqft": 2077,
+    "property_type": "multi_family",
+    "price": 372000,
+    "year_built": 2017,
+    "address": "1594 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1026",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.73931,
+      "longitude": -84.42481
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1652,
+    "property_type": "single_family",
+    "price": 296000,
+    "year_built": 1991,
+    "address": "6661 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1027",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.70852,
+      "longitude": -84.4279
+    },
+    "beds": 5,
+    "baths": 1,
+    "sqft": 2245,
+    "property_type": "multi_family",
+    "price": 313000,
+    "year_built": 2006,
+    "address": "8531 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1028",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.7125,
+      "longitude": -84.42353
+    },
+    "beds": 1,
+    "baths": 3,
+    "sqft": 901,
+    "property_type": "single_family",
+    "price": 167000,
+    "year_built": 2011,
+    "address": "945 Market Ave",
+    "hoa_monthly": 0
+  },
+  {
+    "id": "L1029",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.74211,
+      "longitude": -84.42048
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1287,
+    "property_type": "condo",
+    "price": 223000,
+    "year_built": 1970,
+    "address": "572 Market Ave",
+    "hoa_monthly": 250
+  }
+]

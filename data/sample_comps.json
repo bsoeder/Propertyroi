@@ -1,0 +1,1122 @@
+[
+  {
+    "id": "C1000",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25446,
+      "longitude": -97.75893
+    },
+    "beds": 2,
+    "baths": 1,
+    "sqft": 1092,
+    "property_type": "condo",
+    "monthly_rent": 2350,
+    "address": "1524 Sample St"
+  },
+  {
+    "id": "C1001",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22875,
+      "longitude": -97.77669
+    },
+    "beds": 4,
+    "baths": 1,
+    "sqft": 1650,
+    "property_type": "single_family",
+    "monthly_rent": 3575,
+    "address": "9295 Sample St"
+  },
+  {
+    "id": "C1002",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.24297,
+      "longitude": -97.77487
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1302,
+    "property_type": "condo",
+    "monthly_rent": 2900,
+    "address": "2715 Sample St"
+  },
+  {
+    "id": "C1003",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.23122,
+      "longitude": -97.74771
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1597,
+    "property_type": "townhouse",
+    "monthly_rent": 3250,
+    "address": "1619 Sample St"
+  },
+  {
+    "id": "C1004",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25729,
+      "longitude": -97.75681
+    },
+    "beds": 4,
+    "baths": 1,
+    "sqft": 1683,
+    "property_type": "townhouse",
+    "monthly_rent": 3525,
+    "address": "6301 Sample St"
+  },
+  {
+    "id": "C1005",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25818,
+      "longitude": -97.76126
+    },
+    "beds": 2,
+    "baths": 2.5,
+    "sqft": 1242,
+    "property_type": "townhouse",
+    "monthly_rent": 2775,
+    "address": "9559 Sample St"
+  },
+  {
+    "id": "C1006",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.26441,
+      "longitude": -97.75179
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1716,
+    "property_type": "townhouse",
+    "monthly_rent": 3850,
+    "address": "6327 Sample St"
+  },
+  {
+    "id": "C1007",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.23151,
+      "longitude": -97.77179
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1574,
+    "property_type": "townhouse",
+    "monthly_rent": 3375,
+    "address": "1269 Sample St"
+  },
+  {
+    "id": "C1008",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.2358,
+      "longitude": -97.74898
+    },
+    "beds": 2,
+    "baths": 2.5,
+    "sqft": 1084,
+    "property_type": "multi_family",
+    "monthly_rent": 2600,
+    "address": "3698 Sample St"
+  },
+  {
+    "id": "C1009",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25787,
+      "longitude": -97.7538
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1331,
+    "property_type": "condo",
+    "monthly_rent": 2625,
+    "address": "1184 Sample St"
+  },
+  {
+    "id": "C1010",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.24083,
+      "longitude": -97.74942
+    },
+    "beds": 3,
+    "baths": 2.5,
+    "sqft": 1573,
+    "property_type": "multi_family",
+    "monthly_rent": 3575,
+    "address": "4439 Sample St"
+  },
+  {
+    "id": "C1011",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25488,
+      "longitude": -97.76886
+    },
+    "beds": 2,
+    "baths": 1.5,
+    "sqft": 978,
+    "property_type": "townhouse",
+    "monthly_rent": 2075,
+    "address": "6030 Sample St"
+  },
+  {
+    "id": "C1012",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.25944,
+      "longitude": -97.77989
+    },
+    "beds": 3,
+    "baths": 1.5,
+    "sqft": 1362,
+    "property_type": "single_family",
+    "monthly_rent": 2700,
+    "address": "7016 Sample St"
+  },
+  {
+    "id": "C1013",
+    "location": {
+      "zip_code": "78704",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.24884,
+      "longitude": -97.76728
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1094,
+    "property_type": "multi_family",
+    "monthly_rent": 2375,
+    "address": "9164 Sample St"
+  },
+  {
+    "id": "C1014",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22074,
+      "longitude": -97.79639
+    },
+    "beds": 1,
+    "baths": 3,
+    "sqft": 694,
+    "property_type": "townhouse",
+    "monthly_rent": 1250,
+    "address": "2691 Sample St"
+  },
+  {
+    "id": "C1015",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22888,
+      "longitude": -97.77952
+    },
+    "beds": 4,
+    "baths": 1,
+    "sqft": 1502,
+    "property_type": "townhouse",
+    "monthly_rent": 2725,
+    "address": "1843 Sample St"
+  },
+  {
+    "id": "C1016",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.2205,
+      "longitude": -97.78842
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1316,
+    "property_type": "townhouse",
+    "monthly_rent": 2575,
+    "address": "8789 Sample St"
+  },
+  {
+    "id": "C1017",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.20954,
+      "longitude": -97.80553
+    },
+    "beds": 1,
+    "baths": 2.5,
+    "sqft": 743,
+    "property_type": "townhouse",
+    "monthly_rent": 1325,
+    "address": "5138 Sample St"
+  },
+  {
+    "id": "C1018",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19343,
+      "longitude": -97.79056
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1464,
+    "property_type": "single_family",
+    "monthly_rent": 2400,
+    "address": "8827 Sample St"
+  },
+  {
+    "id": "C1019",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.22787,
+      "longitude": -97.80339
+    },
+    "beds": 2,
+    "baths": 1.5,
+    "sqft": 1358,
+    "property_type": "multi_family",
+    "monthly_rent": 2625,
+    "address": "7032 Sample St"
+  },
+  {
+    "id": "C1020",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.20596,
+      "longitude": -97.78313
+    },
+    "beds": 3,
+    "baths": 2.5,
+    "sqft": 1460,
+    "property_type": "townhouse",
+    "monthly_rent": 2575,
+    "address": "8579 Sample St"
+  },
+  {
+    "id": "C1021",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19899,
+      "longitude": -97.79648
+    },
+    "beds": 4,
+    "baths": 1,
+    "sqft": 1494,
+    "property_type": "condo",
+    "monthly_rent": 2675,
+    "address": "3870 Sample St"
+  },
+  {
+    "id": "C1022",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.1927,
+      "longitude": -97.80874
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1704,
+    "property_type": "condo",
+    "monthly_rent": 2800,
+    "address": "8523 Sample St"
+  },
+  {
+    "id": "C1023",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19857,
+      "longitude": -97.80471
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1571,
+    "property_type": "multi_family",
+    "monthly_rent": 3325,
+    "address": "9455 Sample St"
+  },
+  {
+    "id": "C1024",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19377,
+      "longitude": -97.78364
+    },
+    "beds": 4,
+    "baths": 1.5,
+    "sqft": 1878,
+    "property_type": "condo",
+    "monthly_rent": 3150,
+    "address": "6835 Sample St"
+  },
+  {
+    "id": "C1025",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.21693,
+      "longitude": -97.77063
+    },
+    "beds": 4,
+    "baths": 3,
+    "sqft": 1445,
+    "property_type": "single_family",
+    "monthly_rent": 2525,
+    "address": "6696 Sample St"
+  },
+  {
+    "id": "C1026",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19561,
+      "longitude": -97.80266
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1451,
+    "property_type": "multi_family",
+    "monthly_rent": 2775,
+    "address": "1335 Sample St"
+  },
+  {
+    "id": "C1027",
+    "location": {
+      "zip_code": "78745",
+      "city": "Austin",
+      "state": "TX",
+      "latitude": 30.19202,
+      "longitude": -97.77003
+    },
+    "beds": 4,
+    "baths": 2.5,
+    "sqft": 1929,
+    "property_type": "single_family",
+    "monthly_rent": 3750,
+    "address": "1628 Sample St"
+  },
+  {
+    "id": "C1028",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.1941,
+      "longitude": -86.74841
+    },
+    "beds": 3,
+    "baths": 1.5,
+    "sqft": 1259,
+    "property_type": "multi_family",
+    "monthly_rent": 2125,
+    "address": "6496 Sample St"
+  },
+  {
+    "id": "C1029",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.17492,
+      "longitude": -86.71671
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1577,
+    "property_type": "townhouse",
+    "monthly_rent": 2925,
+    "address": "9205 Sample St"
+  },
+  {
+    "id": "C1030",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.18117,
+      "longitude": -86.73331
+    },
+    "beds": 4,
+    "baths": 1.5,
+    "sqft": 1851,
+    "property_type": "single_family",
+    "monthly_rent": 3325,
+    "address": "1036 Sample St"
+  },
+  {
+    "id": "C1031",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.17811,
+      "longitude": -86.72089
+    },
+    "beds": 1,
+    "baths": 2.5,
+    "sqft": 880,
+    "property_type": "multi_family",
+    "monthly_rent": 1525,
+    "address": "8420 Sample St"
+  },
+  {
+    "id": "C1032",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.17415,
+      "longitude": -86.71734
+    },
+    "beds": 2,
+    "baths": 1.5,
+    "sqft": 1168,
+    "property_type": "condo",
+    "monthly_rent": 1925,
+    "address": "9585 Sample St"
+  },
+  {
+    "id": "C1033",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.17477,
+      "longitude": -86.73165
+    },
+    "beds": 1,
+    "baths": 2.5,
+    "sqft": 781,
+    "property_type": "single_family",
+    "monthly_rent": 1375,
+    "address": "4372 Sample St"
+  },
+  {
+    "id": "C1034",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.16324,
+      "longitude": -86.72918
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1418,
+    "property_type": "multi_family",
+    "monthly_rent": 2650,
+    "address": "1288 Sample St"
+  },
+  {
+    "id": "C1035",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.16093,
+      "longitude": -86.74647
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 605,
+    "property_type": "single_family",
+    "monthly_rent": 1025,
+    "address": "5818 Sample St"
+  },
+  {
+    "id": "C1036",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.18247,
+      "longitude": -86.71551
+    },
+    "beds": 2,
+    "baths": 1.5,
+    "sqft": 1020,
+    "property_type": "townhouse",
+    "monthly_rent": 1775,
+    "address": "228 Sample St"
+  },
+  {
+    "id": "C1037",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.19556,
+      "longitude": -86.74963
+    },
+    "beds": 5,
+    "baths": 2,
+    "sqft": 2235,
+    "property_type": "single_family",
+    "monthly_rent": 3550,
+    "address": "1853 Sample St"
+  },
+  {
+    "id": "C1038",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.16614,
+      "longitude": -86.72963
+    },
+    "beds": 5,
+    "baths": 1.5,
+    "sqft": 2111,
+    "property_type": "townhouse",
+    "monthly_rent": 3400,
+    "address": "8104 Sample St"
+  },
+  {
+    "id": "C1039",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.18337,
+      "longitude": -86.72183
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1719,
+    "property_type": "single_family",
+    "monthly_rent": 2625,
+    "address": "5564 Sample St"
+  },
+  {
+    "id": "C1040",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.18007,
+      "longitude": -86.73789
+    },
+    "beds": 2,
+    "baths": 3,
+    "sqft": 1217,
+    "property_type": "multi_family",
+    "monthly_rent": 2050,
+    "address": "1332 Sample St"
+  },
+  {
+    "id": "C1041",
+    "location": {
+      "zip_code": "37206",
+      "city": "Nashville",
+      "state": "TN",
+      "latitude": 36.19138,
+      "longitude": -86.7317
+    },
+    "beds": 2,
+    "baths": 2.5,
+    "sqft": 1084,
+    "property_type": "single_family",
+    "monthly_rent": 1775,
+    "address": "2188 Sample St"
+  },
+  {
+    "id": "C1042",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.49796,
+      "longitude": -81.8106
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 500,
+    "property_type": "single_family",
+    "monthly_rent": 625,
+    "address": "1784 Sample St"
+  },
+  {
+    "id": "C1043",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.50095,
+      "longitude": -81.78902
+    },
+    "beds": 3,
+    "baths": 2.5,
+    "sqft": 1799,
+    "property_type": "multi_family",
+    "monthly_rent": 2525,
+    "address": "3978 Sample St"
+  },
+  {
+    "id": "C1044",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.4933,
+      "longitude": -81.80253
+    },
+    "beds": 2,
+    "baths": 1.5,
+    "sqft": 1132,
+    "property_type": "townhouse",
+    "monthly_rent": 1400,
+    "address": "4165 Sample St"
+  },
+  {
+    "id": "C1045",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.4773,
+      "longitude": -81.81745
+    },
+    "beds": 3,
+    "baths": 1.5,
+    "sqft": 1419,
+    "property_type": "single_family",
+    "monthly_rent": 1725,
+    "address": "3369 Sample St"
+  },
+  {
+    "id": "C1046",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47092,
+      "longitude": -81.7926
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1678,
+    "property_type": "condo",
+    "monthly_rent": 1950,
+    "address": "4664 Sample St"
+  },
+  {
+    "id": "C1047",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.48766,
+      "longitude": -81.80301
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1435,
+    "property_type": "townhouse",
+    "monthly_rent": 1850,
+    "address": "8885 Sample St"
+  },
+  {
+    "id": "C1048",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.48522,
+      "longitude": -81.77966
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1847,
+    "property_type": "condo",
+    "monthly_rent": 1875,
+    "address": "9874 Sample St"
+  },
+  {
+    "id": "C1049",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47946,
+      "longitude": -81.77963
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 2151,
+    "property_type": "townhouse",
+    "monthly_rent": 2350,
+    "address": "9546 Sample St"
+  },
+  {
+    "id": "C1050",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47657,
+      "longitude": -81.8162
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1655,
+    "property_type": "condo",
+    "monthly_rent": 1975,
+    "address": "5509 Sample St"
+  },
+  {
+    "id": "C1051",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.49079,
+      "longitude": -81.80699
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1508,
+    "property_type": "single_family",
+    "monthly_rent": 1800,
+    "address": "6791 Sample St"
+  },
+  {
+    "id": "C1052",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47882,
+      "longitude": -81.78139
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1367,
+    "property_type": "condo",
+    "monthly_rent": 1675,
+    "address": "2951 Sample St"
+  },
+  {
+    "id": "C1053",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.47415,
+      "longitude": -81.81059
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1209,
+    "property_type": "single_family",
+    "monthly_rent": 1625,
+    "address": "5379 Sample St"
+  },
+  {
+    "id": "C1054",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.49375,
+      "longitude": -81.78061
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1670,
+    "property_type": "multi_family",
+    "monthly_rent": 2325,
+    "address": "1489 Sample St"
+  },
+  {
+    "id": "C1055",
+    "location": {
+      "zip_code": "44107",
+      "city": "Lakewood",
+      "state": "OH",
+      "latitude": 41.46574,
+      "longitude": -81.78092
+    },
+    "beds": 3,
+    "baths": 2.5,
+    "sqft": 1499,
+    "property_type": "townhouse",
+    "monthly_rent": 1725,
+    "address": "5185 Sample St"
+  },
+  {
+    "id": "C1056",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.72945,
+      "longitude": -84.40726
+    },
+    "beds": 3,
+    "baths": 1.5,
+    "sqft": 1486,
+    "property_type": "multi_family",
+    "monthly_rent": 2225,
+    "address": "9531 Sample St"
+  },
+  {
+    "id": "C1057",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.72478,
+      "longitude": -84.42824
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1499,
+    "property_type": "multi_family",
+    "monthly_rent": 2400,
+    "address": "190 Sample St"
+  },
+  {
+    "id": "C1058",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.70701,
+      "longitude": -84.42803
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1170,
+    "property_type": "multi_family",
+    "monthly_rent": 1900,
+    "address": "7578 Sample St"
+  },
+  {
+    "id": "C1059",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.743,
+      "longitude": -84.40234
+    },
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1454,
+    "property_type": "townhouse",
+    "monthly_rent": 2025,
+    "address": "8370 Sample St"
+  },
+  {
+    "id": "C1060",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.723,
+      "longitude": -84.40793
+    },
+    "beds": 4,
+    "baths": 2.5,
+    "sqft": 1688,
+    "property_type": "multi_family",
+    "monthly_rent": 2800,
+    "address": "4643 Sample St"
+  },
+  {
+    "id": "C1061",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.71598,
+      "longitude": -84.4349
+    },
+    "beds": 5,
+    "baths": 2,
+    "sqft": 2189,
+    "property_type": "condo",
+    "monthly_rent": 2850,
+    "address": "4551 Sample St"
+  },
+  {
+    "id": "C1062",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.71425,
+      "longitude": -84.41024
+    },
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1514,
+    "property_type": "condo",
+    "monthly_rent": 2150,
+    "address": "1152 Sample St"
+  },
+  {
+    "id": "C1063",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.7267,
+      "longitude": -84.42137
+    },
+    "beds": 4,
+    "baths": 2,
+    "sqft": 1748,
+    "property_type": "townhouse",
+    "monthly_rent": 2325,
+    "address": "6983 Sample St"
+  },
+  {
+    "id": "C1064",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.72408,
+      "longitude": -84.40029
+    },
+    "beds": 4,
+    "baths": 2.5,
+    "sqft": 1837,
+    "property_type": "multi_family",
+    "monthly_rent": 2700,
+    "address": "6489 Sample St"
+  },
+  {
+    "id": "C1065",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.72453,
+      "longitude": -84.42708
+    },
+    "beds": 4,
+    "baths": 2.5,
+    "sqft": 1786,
+    "property_type": "condo",
+    "monthly_rent": 2450,
+    "address": "6471 Sample St"
+  },
+  {
+    "id": "C1066",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.73862,
+      "longitude": -84.40122
+    },
+    "beds": 3,
+    "baths": 3,
+    "sqft": 1362,
+    "property_type": "condo",
+    "monthly_rent": 2100,
+    "address": "8851 Sample St"
+  },
+  {
+    "id": "C1067",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.70836,
+      "longitude": -84.42086
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 566,
+    "property_type": "single_family",
+    "monthly_rent": 900,
+    "address": "3077 Sample St"
+  },
+  {
+    "id": "C1068",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.7185,
+      "longitude": -84.40281
+    },
+    "beds": 1,
+    "baths": 2,
+    "sqft": 649,
+    "property_type": "townhouse",
+    "monthly_rent": 900,
+    "address": "7006 Sample St"
+  },
+  {
+    "id": "C1069",
+    "location": {
+      "zip_code": "30310",
+      "city": "Atlanta",
+      "state": "GA",
+      "latitude": 33.70578,
+      "longitude": -84.41642
+    },
+    "beds": 3,
+    "baths": 1,
+    "sqft": 1544,
+    "property_type": "multi_family",
+    "monthly_rent": 2525,
+    "address": "5833 Sample St"
+  }
+]
