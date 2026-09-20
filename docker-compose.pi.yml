@@ -1,0 +1,39 @@
+# Raspberry Pi deployment: run the published image from GHCR and let Watchtower
+# auto-pull new versions whenever CI publishes an updated :latest image.
+#
+#   export PROPERTYROI_IMAGE=ghcr.io/bsoeder/propertyroi:latest
+#   docker compose -f docker-compose.pi.yml up -d
+#
+# Notes:
+#  - The image is multi-arch; Docker on the Pi (arm64) pulls the arm64 variant.
+#  - If the GHCR package is private, run `docker login ghcr.io` on the Pi first.
+services:
+  propertyroi:
+    image: ${PROPERTYROI_IMAGE:-ghcr.io/bsoeder/propertyroi:latest}
+    container_name: propertyroi
+    ports:
+      - "8000:8000"
+    environment:
+      PROPERTYROI_PROVIDER: "${PROPERTYROI_PROVIDER:-json}"
+      RAPIDAPI_KEY: "${RAPIDAPI_KEY:-}"
+      RENTCAST_API_KEY: "${RENTCAST_API_KEY:-}"
+      ZILLOW_RAPIDAPI_HOST: "${ZILLOW_RAPIDAPI_HOST:-}"
+      REALTOR_RAPIDAPI_HOST: "${REALTOR_RAPIDAPI_HOST:-}"
+    restart: unless-stopped
+    labels:
+      # Watchtower only auto-updates containers opted in with this label.
+      com.centurylinklabs.watchtower.enable: "true"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mount this if GHCR needs auth (created by `docker login ghcr.io`):
+      # - /home/pi/.docker/config.json:/config.json:ro
+    environment:
+      # Poll every 5 minutes; only touch labeled containers; clean old images.
+      WATCHTOWER_POLL_INTERVAL: "300"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_CLEANUP: "true"
+    restart: unless-stopped
