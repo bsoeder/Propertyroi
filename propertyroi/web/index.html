@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PropertyROI</title>
+<style>
+  :root {
+    --bg: #0f1420; --panel: #1a2130; --panel2: #222b3d; --line: #2c3750;
+    --text: #e8edf6; --muted: #9aa7bd; --accent: #4f8cff; --good: #37d39b;
+    --warn: #f0b429; --bad: #ff6b6b; --chip: #2a3550;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f4f6fb; --panel: #ffffff; --panel2: #f0f3fa; --line: #dfe5f0;
+      --text: #16202e; --muted: #5d6b83; --accent: #2f6bff; --good: #12a06f;
+      --warn: #b47500; --bad: #d63b3b; --chip: #eaf0fb;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  header { padding: 20px 16px; border-bottom: 1px solid var(--line); background: var(--panel);
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 20px; letter-spacing: .3px; }
+  header .tag { color: var(--muted); font-size: 13px; }
+  header .disclaimer { color: var(--muted); font-size: 12px; margin-left: auto; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab { padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+    color: var(--muted); cursor: pointer; font-size: 14px; }
+  .tab.active { color: var(--text); border-color: var(--accent); background: var(--panel2); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  form.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; align-items: end; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  input, select { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--panel2); color: var(--text); font-size: 14px; }
+  button.primary { grid-column: 1 / -1; justify-self: start; padding: 10px 20px; border: 0; border-radius: 8px;
+    background: var(--accent); color: #fff; font-weight: 600; cursor: pointer; font-size: 14px; }
+  button.primary:disabled { opacity: .6; cursor: default; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: right; padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th:first-child, td:first-child, th.l, td.l { text-align: left; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; }
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover td { background: var(--panel2); }
+  .scorebar { position: relative; height: 18px; width: 88px; background: var(--chip); border-radius: 5px; overflow: hidden; display: inline-block; vertical-align: middle; }
+  .scorebar > span { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+  .scorebar > b { position: relative; z-index: 1; font-size: 11px; line-height: 18px; padding-left: 6px; color: #fff; mix-blend-mode: difference; }
+  .chip { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; background: var(--chip); color: var(--muted); }
+  .chip.good { color: var(--good); } .chip.bad { color: var(--bad); }
+  .pos { color: var(--good); } .neg { color: var(--bad); }
+  .muted { color: var(--muted); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .kpi { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  .kpi .v { font-size: 22px; font-weight: 700; }
+  .kpi .k { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .msg { padding: 10px 12px; border-radius: 8px; background: var(--panel2); color: var(--muted); }
+  .msg.err { color: var(--bad); }
+  h2 { font-size: 16px; margin: 0 0 12px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; font-size: 14px; }
+  .detail-grid .row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 5px 0; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>PropertyROI</h1>
+  <span class="tag">rental-potential explorer &amp; ROI ranker</span>
+  <span class="disclaimer">Transparent model — not investment advice.</span>
+</header>
+
+<main>
+  <div class="tabs">
+    <div class="tab active" data-tab="scan">Find deals</div>
+    <div class="tab" data-tab="accuracy">Estimator accuracy</div>
+  </div>
+
+  <!-- SCAN -->
+  <section id="tab-scan">
+    <div class="panel">
+      <form class="controls" id="scanForm">
+        <div><label>ZIP code</label><input name="zip" placeholder="e.g. 44107" /></div>
+        <div><label>Max price ($)</label><input name="max_price" type="number" placeholder="any" /></div>
+        <div><label>Min beds</label><input name="min_beds" type="number" placeholder="any" /></div>
+        <div><label>Property type</label>
+          <select name="type">
+            <option value="">any</option>
+            <option value="single_family">single family</option>
+            <option value="condo">condo</option>
+            <option value="townhouse">townhouse</option>
+            <option value="multi_family">multi family</option>
+          </select>
+        </div>
+        <div><label>Down payment</label>
+          <select name="down">
+            <option value="">default (25%)</option>
+            <option value="0.05">5%</option><option value="0.10">10%</option>
+            <option value="0.20">20%</option><option value="0.25">25%</option>
+            <option value="0.50">50%</option><option value="1.0">all cash</option>
+          </select>
+        </div>
+        <div><label>Mortgage rate</label>
+          <select name="rate">
+            <option value="">default (7%)</option>
+            <option value="0.05">5%</option><option value="0.06">6%</option>
+            <option value="0.07">7%</option><option value="0.08">8%</option>
+          </select>
+        </div>
+        <div><label>Data source</label>
+          <select name="provider">
+            <option value="json">sample (offline)</option>
+            <option value="zillow">Zillow (live)</option>
+            <option value="realtor">Realtor.com (live)</option>
+            <option value="combined">Zillow + Realtor</option>
+            <option value="rentcast">RentCast (live)</option>
+          </select>
+        </div>
+        <div><label>Limit</label><input name="limit" type="number" placeholder="all" /></div>
+        <button class="primary" type="submit">Scan &amp; rank</button>
+      </form>
+      <div class="hint">Live sources need API keys set on the server (RAPIDAPI_KEY / RENTCAST_API_KEY).</div>
+    </div>
+
+    <div id="scanMsg"></div>
+    <div class="panel" id="resultsPanel" style="display:none">
+      <h2 id="resultsTitle">Results</h2>
+      <div style="overflow-x:auto">
+        <table id="resultsTable">
+          <thead><tr>
+            <th class="l">Score</th><th class="l">ID</th><th>Price</th><th class="l">Size</th>
+            <th>Est. rent</th><th>Conf.</th><th>Cap</th><th>CoC</th><th>Cash flow</th><th class="l">1%</th><th class="l">ZIP</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel" id="detailPanel" style="display:none">
+      <h2 id="detailTitle">Listing detail</h2>
+      <div class="kpis" id="detailKpis"></div>
+      <div class="detail-grid" id="detailGrid" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- ACCURACY -->
+  <section id="tab-accuracy" style="display:none">
+    <div class="panel">
+      <h2>Rent estimator accuracy</h2>
+      <p class="muted">Leave-one-out evaluation against the labeled data set: each property is
+        priced from every other property and compared to its actual rent.</p>
+      <button class="primary" id="runTest" style="justify-self:start">Run accuracy test</button>
+    </div>
+    <div id="testMsg"></div>
+    <div class="panel" id="testPanel" style="display:none">
+      <div class="kpis" id="testKpis"></div>
+      <h2 style="margin-top:18px">Per-property predictions</h2>
+      <div style="overflow-x:auto">
+        <table id="testTable">
+          <thead><tr><th class="l">ID</th><th>Actual</th><th>Predicted</th><th>Error</th><th>APE</th><th>Conf.</th><th>Comps</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>PropertyROI · standard-library Python · <span class="muted">estimates are a model, verify before investing</span></footer>
+
+<script>
+const $ = (s, r=document) => r.querySelector(s);
+const money = n => (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString();
+const pct = n => (n*100).toFixed(1) + "%";
+
+// Tabs
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+  t.classList.add("active");
+  $("#tab-scan").style.display = t.dataset.tab === "scan" ? "" : "none";
+  $("#tab-accuracy").style.display = t.dataset.tab === "accuracy" ? "" : "none";
+});
+
+function scoreBar(score) {
+  const w = Math.max(0, Math.min(100, score));
+  return `<span class="scorebar"><span style="width:${w}%"></span><b>${score.toFixed(1)}</b></span>`;
+}
+function signed(n) { const c = n>=0?"pos":"neg"; return `<span class="${c}">${money(n)}</span>`; }
+
+// Scan
+$("#scanForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = $("#scanForm button"); btn.disabled = true;
+  $("#scanMsg").innerHTML = `<div class="msg">Scanning…</div>`;
+  $("#detailPanel").style.display = "none";
+  const fd = new FormData(e.target);
+  const p = new URLSearchParams();
+  for (const [k, v] of fd.entries()) if (v) p.set(k, v);
+  try {
+    const r = await fetch("/api/scan?" + p.toString());
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || "request failed");
+    renderResults(data, fd.get("provider"));
+    $("#scanMsg").innerHTML = "";
+  } catch (err) {
+    $("#scanMsg").innerHTML = `<div class="msg err">${err.message}</div>`;
+    $("#resultsPanel").style.display = "none";
+  } finally { btn.disabled = false; }
+});
+
+function renderResults(data, provider) {
+  const tb = $("#resultsTable tbody"); tb.innerHTML = "";
+  $("#resultsTitle").textContent = `${data.count} listing(s) ranked by ROI score`;
+  if (!data.count) { $("#scanMsg").innerHTML = `<div class="msg">No listings matched.</div>`; $("#resultsPanel").style.display="none"; return; }
+  for (const d of data.deals) {
+    const l = d.listing, m = d.metrics, re = d.rent_estimate;
+    const tr = document.createElement("tr");
+    tr.className = "clickable";
+    tr.innerHTML = `
+      <td class="l">${scoreBar(m.score)}</td>
+      <td class="l">${l.id}</td>
+      <td>${money(l.price)}</td>
+      <td class="l">${l.beds}bd/${l.baths}ba · ${l.sqft.toLocaleString()}sf</td>
+      <td>${money(re.monthly_rent)}</td>
+      <td>${(re.confidence*100).toFixed(0)}%</td>
+      <td>${pct(m.cap_rate)}</td>
+      <td class="${m.cash_on_cash>=0?'pos':'neg'}">${pct(m.cash_on_cash)}</td>
+      <td>${signed(m.monthly_cash_flow)}/mo</td>
+      <td class="l">${m.meets_one_percent_rule ? '<span class="chip good">yes</span>' : '<span class="chip">no</span>'}</td>
+      <td class="l">${l.location.zip_code}</td>`;
+    tr.onclick = () => showDetail(d, provider);
+    tb.appendChild(tr);
+  }
+  $("#resultsPanel").style.display = "";
+}
+
+function kpi(v, k, cls="") { return `<div class="kpi"><div class="v ${cls}">${v}</div><div class="k">${k}</div></div>`; }
+
+function showDetail(d, provider) {
+  const l = d.listing, m = d.metrics, re = d.rent_estimate;
+  $("#detailTitle").textContent = `${l.id} — ${l.address || l.location.zip_code}`;
+  $("#detailKpis").innerHTML =
+    kpi(money(re.monthly_rent), `est. rent/mo (±${money((re.high-re.low)/2)})`) +
+    kpi(pct(m.cap_rate), "cap rate") +
+    kpi(pct(m.cash_on_cash), "cash-on-cash", m.cash_on_cash>=0?"pos":"neg") +
+    kpi(money(m.monthly_cash_flow)+"/mo", "cash flow", m.monthly_cash_flow>=0?"pos":"neg") +
+    kpi(m.score.toFixed(1), "ROI score");
+  const rows = [
+    ["List price", money(l.price)],
+    ["Type / built", `${l.property_type} · ${l.year_built || "?"}`],
+    ["Size", `${l.beds}bd / ${l.baths}ba / ${l.sqft.toLocaleString()} sqft`],
+    ["Rent estimate range", `${money(re.low)} – ${money(re.high)}`],
+    ["Estimate confidence", `${(re.confidence*100).toFixed(0)}% · ${re.comps_used} comps`],
+    ["Gross yield", pct(m.gross_yield)],
+    ["Net operating income", money(m.net_operating_income) + "/yr"],
+    ["Cash invested", money(m.cash_invested)],
+    ["Annual cash flow", money(m.annual_cash_flow)],
+    ["1% rule", m.meets_one_percent_rule ? "pass" : "fail"],
+  ];
+  $("#detailGrid").innerHTML = rows.map(([k,v]) => `<div class="row"><span class="muted">${k}</span><span>${v}</span></div>`).join("");
+  $("#detailPanel").style.display = "";
+  $("#detailPanel").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+
+// Accuracy
+$("#runTest").addEventListener("click", async () => {
+  const btn = $("#runTest"); btn.disabled = true;
+  $("#testMsg").innerHTML = `<div class="msg">Evaluating…</div>`;
+  try {
+    const r = await fetch("/api/test");
+    const rep = await r.json();
+    if (!r.ok) throw new Error(rep.error || "request failed");
+    $("#testKpis").innerHTML =
+      kpi(rep.n, "samples priced") +
+      kpi(money(rep.mae)+"/mo", "MAE") +
+      kpi(pct(rep.mape), "MAPE") +
+      kpi(rep.r2.toFixed(3), "R²") +
+      kpi((rep.within_10pct*100).toFixed(0)+"%", "within 10%") +
+      kpi(signedTxt(rep.bias)+"/mo", "bias");
+    const tb = $("#testTable tbody"); tb.innerHTML = "";
+    for (const p of rep.predictions) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td class="l">${p.id}</td><td>${money(p.actual)}</td><td>${money(p.predicted)}</td>
+        <td class="${p.error>=0?'pos':'neg'}">${signedTxt(p.error)}</td><td>${pct(p.pct_error)}</td>
+        <td>${(p.confidence*100).toFixed(0)}%</td><td>${p.comps_used}</td>`;
+      tb.appendChild(tr);
+    }
+    $("#testPanel").style.display = "";
+    $("#testMsg").innerHTML = "";
+  } catch (err) {
+    $("#testMsg").innerHTML = `<div class="msg err">${err.message}</div>`;
+  } finally { btn.disabled = false; }
+});
+function signedTxt(n){ return (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString(); }
+</script>
+</body>
+</html>

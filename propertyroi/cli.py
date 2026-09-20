@@ -8,6 +8,9 @@ Examples
     # Analyze a single listing by id
     python -m propertyroi analyze --id L1004
 
+    # Launch the web GUI (then open http://localhost:8000)
+    python -m propertyroi serve --port 8000
+
     # Evaluate the estimator's accuracy against labeled data
     python -m propertyroi test
 
@@ -142,6 +145,13 @@ def cmd_analyze(args) -> int:
     return 0
 
 
+def cmd_serve(args) -> int:
+    from .webapp import serve
+
+    serve(host=args.host, port=args.port)
+    return 0
+
+
 def cmd_test(args) -> int:
     labeled = load_labeled(args.data)
     tester = AccuracyTester(RentEstimator())
@@ -195,6 +205,11 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--id", required=True, help="listing id")
     sp.add_argument("--zip", help="ZIP code hint")
     sp.set_defaults(func=cmd_analyze)
+
+    sp = sub.add_parser("serve", help="launch the web GUI + JSON API")
+    sp.add_argument("--host", default="0.0.0.0", help="bind host (default 0.0.0.0)")
+    sp.add_argument("--port", type=int, default=8000, help="bind port (default 8000)")
+    sp.set_defaults(func=cmd_serve)
 
     sp = sub.add_parser("test", help="evaluate estimator accuracy on labeled data")
     sp.add_argument("--data", default=None, help="path to labeled JSON")

@@ -26,7 +26,7 @@ import math
 import statistics
 from typing import List, Optional, Sequence
 
-from .models import Listing, RentalComp, RentEstimate, Location
+from .models import Listing, Location, RentalComp, RentEstimate
 
 
 def _haversine_miles(a: Location, b: Location) -> Optional[float]:

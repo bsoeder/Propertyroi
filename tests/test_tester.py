@@ -1,7 +1,6 @@
 import os
 import unittest
 
-from propertyroi.estimator import RentEstimator
 from propertyroi.models import Listing, Location
 from propertyroi.tester import AccuracyTester, LabeledProperty, load_labeled
 

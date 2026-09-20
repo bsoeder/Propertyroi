@@ -2,7 +2,7 @@ import unittest
 
 from propertyroi.analyzer import Analyzer, Assumptions, monthly_mortgage_payment
 from propertyroi.estimator import RentEstimator
-from propertyroi.models import Listing, Location, RentEstimate, RentalComp
+from propertyroi.models import Listing, Location, RentalComp, RentEstimate
 from propertyroi.providers.base import DataProvider
 
 

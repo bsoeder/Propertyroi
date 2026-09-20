@@ -1,8 +1,8 @@
 """Data providers for PropertyROI."""
 
 from .base import DataProvider
-from .json_provider import JsonProvider
 from .combined import CombinedProvider
+from .json_provider import JsonProvider
 
 __all__ = ["DataProvider", "JsonProvider", "CombinedProvider"]
 

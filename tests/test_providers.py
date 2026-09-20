@@ -6,7 +6,6 @@ from propertyroi.providers.combined import CombinedProvider
 from propertyroi.providers.realtor import RealtorProvider
 from propertyroi.providers.zillow import ZillowProvider
 
-
 # --- Zillow -----------------------------------------------------------------
 ZILLOW_SALE = {
     "props": [
