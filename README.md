@@ -21,6 +21,34 @@ data.
 
 ## Quick start
 
+### Web GUI (Docker)
+
+```bash
+docker compose up --build
+# then open http://localhost:8000
+```
+
+Or with plain Docker:
+
+```bash
+docker build -t propertyroi .
+docker run --rm -p 8000:8000 propertyroi
+```
+
+The GUI has two tabs: **Find deals** (search + ranked results table, click a row
+for a full ROI breakdown) and **Estimator accuracy** (runs the leave-one-out
+tester and shows MAE / MAPE / R² plus per-property predictions). It runs on the
+bundled sample data out of the box; switch data sources with the dropdown (live
+sources need API keys — see below).
+
+### Web GUI (no Docker)
+
+```bash
+python -m propertyroi serve --port 8000    # open http://localhost:8000
+```
+
+### Command line
+
 ```bash
 # Rank rental deals in a ZIP (bundled sample data)
 python -m propertyroi scan --zip 44107 --limit 5
@@ -109,6 +137,18 @@ export RENTCAST_API_KEY=your_key
 python -m propertyroi scan --zip 78704 --provider rentcast
 ```
 
+In Docker, select the default data source with `PROPERTYROI_PROVIDER` and pass
+the keys through:
+
+```bash
+docker run --rm -p 8000:8000 \
+  -e PROPERTYROI_PROVIDER=combined \
+  -e RAPIDAPI_KEY=your_rapidapi_key \
+  propertyroi
+```
+
+(`docker-compose.yml` reads these from your shell/`.env` automatically.)
+
 Each provider maps its source's sale and rental listings onto the same models,
 so the estimator, analyzer, and tester all work unchanged. Any provider
 implementing `propertyroi.providers.base.DataProvider` can be swapped in.
@@ -149,10 +189,30 @@ propertyroi/
   estimator.py       # comps-based rent estimation
   analyzer.py        # ROI metrics + deal ranking
   tester.py          # accuracy evaluator (leave-one-out)
-  cli.py             # `python -m propertyroi` commands: scan / analyze / test
+  webapp.py          # stdlib web server: GUI + JSON API
+  web/index.html     # single-page GUI (no external dependencies)
+  cli.py             # `python -m propertyroi` commands: scan / analyze / serve / test
   providers/         # JsonProvider (default), Zillow/Realtor/RentCast (live), CombinedProvider
 data/                # sample listings, comps, labeled eval set
 tests/               # unittest suite (run: python -m unittest discover -s tests)
+Dockerfile           # container image (runs `serve`)
+docker-compose.yml   # one-command run with env-based config
+```
+
+## Web API
+
+The server (`python -m propertyroi serve`, port 8000) exposes:
+
+| Endpoint | Description |
+|---|---|
+| `GET /` | the single-page GUI |
+| `GET /api/health` | liveness + active provider |
+| `GET /api/scan` | ranked deals — params: `zip`, `max_price`, `min_beds`, `type`, `limit`, `provider`, `down`, `rate` |
+| `GET /api/analyze` | one listing — params: `id`, `provider`, `down`, `rate` |
+| `GET /api/test` | accuracy report (JSON) against the labeled data set |
+
+```bash
+curl "http://localhost:8000/api/scan?zip=44107&limit=5"
 ```
 
 ## Tests

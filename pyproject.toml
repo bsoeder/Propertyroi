@@ -23,7 +23,7 @@ dev = ["ruff>=0.6"]
 packages = ["propertyroi", "propertyroi.providers"]
 
 [tool.setuptools.package-data]
-propertyroi = []
+propertyroi = ["web/*.html"]
 
 [tool.ruff]
 line-length = 100
