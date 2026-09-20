@@ -17,10 +17,22 @@ dependencies = []  # standard library only
 propertyroi = "propertyroi.cli:main"
 
 [project.optional-dependencies]
-dev = []
+dev = ["ruff>=0.6"]
 
 [tool.setuptools]
 packages = ["propertyroi", "propertyroi.providers"]
 
 [tool.setuptools.package-data]
 propertyroi = []
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+# pycodestyle errors, pyflakes, isort, flake8-bugbear.
+select = ["E", "F", "I", "B"]
+ignore = [
+    "E501",  # line length is enforced softly; long docstrings/tables are fine
+    "E741",  # `l` is used deliberately as a short name for a Listing
+]

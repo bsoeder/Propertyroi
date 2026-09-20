@@ -9,9 +9,8 @@ ROI metrics on top of the rent estimate.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from typing import Optional
-
 
 PropertyType = str  # "single_family" | "condo" | "townhouse" | "multi_family"
 
