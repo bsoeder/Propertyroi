@@ -47,6 +47,17 @@ sources need API keys — see below).
 python -m propertyroi serve --port 8000    # open http://localhost:8000
 ```
 
+### Make targets
+
+```bash
+make up          # docker compose up --build
+make serve       # run the GUI locally (PORT=… PROVIDER=…)
+make test        # run the test suite
+make lint        # ruff check
+make accuracy    # run the accuracy tester
+make help        # list all targets
+```
+
 ### Command line
 
 ```bash
