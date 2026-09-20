@@ -58,6 +58,39 @@ make accuracy    # run the accuracy tester
 make help        # list all targets
 ```
 
+### Raspberry Pi (auto-updating)
+
+CI publishes a multi-arch image (amd64 + **arm64**) to GHCR on every push to
+`main`. On the Pi, run the app plus **Watchtower**, which polls the registry and
+auto-pulls new versions:
+
+```bash
+# one-time
+sudo apt-get update && sudo apt-get install -y docker.io docker-compose-plugin
+git clone https://github.com/bsoeder/Propertyroi.git && cd Propertyroi
+
+# if the GHCR package is private, log in once (else skip):
+#   echo <GITHUB_PAT_with_read:packages> | docker login ghcr.io -u bsoeder --password-stdin
+
+# start the app + auto-updater (detached)
+export PROPERTYROI_IMAGE=ghcr.io/bsoeder/propertyroi:latest
+docker compose -f docker-compose.pi.yml up -d
+```
+
+Then open `http://<pi-ip>:8000`. Watchtower checks every 5 minutes and, when CI
+publishes a new `:latest`, pulls it and restarts the container automatically —
+no manual redeploy. Manage it with:
+
+```bash
+docker compose -f docker-compose.pi.yml logs -f        # watch activity
+docker compose -f docker-compose.pi.yml pull           # force an update now
+docker compose -f docker-compose.pi.yml down           # stop everything
+```
+
+> Prefer building on the Pi instead of pulling? Use a git-based updater: a cron
+> job running `git pull && docker compose up -d --build` in the repo achieves
+> the same "auto-update" without a registry.
+
 ### Command line
 
 ```bash
