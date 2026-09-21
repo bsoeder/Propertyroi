@@ -113,6 +113,8 @@
             <option value="json">sample (offline)</option>
             <option value="zillow">Zillow (live)</option>
             <option value="realtor">Realtor.com (live)</option>
+            <option value="mvba">MVBA tax-sale land (live)</option>
+            <option value="realtor,mvba">Realtor + MVBA land</option>
             <option value="combined">Zillow + Realtor</option>
             <option value="rentcast">RentCast (live)</option>
           </select>
@@ -120,7 +122,7 @@
         <div><label>Limit</label><input name="limit" type="number" placeholder="all" /></div>
         <button class="primary" type="submit">Scan &amp; rank</button>
       </form>
-      <div class="hint">Live sources need API keys set on the server (RAPIDAPI_KEY / RENTCAST_API_KEY).</div>
+      <div class="hint">Live sources need config on the server: RAPIDAPI_KEY (Zillow/Realtor), RENTCAST_API_KEY, MVBA_SALES_URL (tax-sale land).</div>
     </div>
 
     <div id="scanMsg"></div>
@@ -216,18 +218,35 @@ function renderResults(data, provider) {
     const l = d.listing, m = d.metrics, re = d.rent_estimate;
     const tr = document.createElement("tr");
     tr.className = "clickable";
-    tr.innerHTML = `
-      <td class="l">${scoreBar(m.score)}</td>
-      <td class="l">${l.id}</td>
-      <td>${money(l.price)}</td>
-      <td class="l">${l.beds}bd/${l.baths}ba · ${l.sqft.toLocaleString()}sf</td>
-      <td>${money(re.monthly_rent)}</td>
-      <td>${(re.confidence*100).toFixed(0)}%</td>
-      <td>${pct(m.cap_rate)}</td>
-      <td class="${m.cash_on_cash>=0?'pos':'neg'}">${pct(m.cash_on_cash)}</td>
-      <td>${signed(m.monthly_cash_flow)}/mo</td>
-      <td class="l">${m.meets_one_percent_rule ? '<span class="chip good">yes</span>' : '<span class="chip">no</span>'}</td>
-      <td class="l">${l.location.zip_code}</td>`;
+    if (m.is_land) {
+      // Land / tax-sale row: show land-specific figures in the rental columns.
+      const size = l.lot_acres ? `${l.lot_acres} ac` : "land";
+      tr.innerHTML = `
+        <td class="l">${scoreBar(m.score)} <span class="chip">land</span></td>
+        <td class="l">${l.id}</td>
+        <td>${money(l.price)}</td>
+        <td class="l">${size}${l.location.county ? " · " + l.location.county : ""}</td>
+        <td>${l.adjudged_value ? money(l.adjudged_value) : "—"}</td>
+        <td>${m.discount_to_adjudged>0 ? pct(m.discount_to_adjudged) : "—"}</td>
+        <td>${m.price_per_acre ? money(m.price_per_acre)+"/ac" : "—"}</td>
+        <td class="muted">—</td>
+        <td class="muted">—</td>
+        <td class="l muted">${l.sale_date || ""}</td>
+        <td class="l">${l.location.zip_code || l.location.county}</td>`;
+    } else {
+      tr.innerHTML = `
+        <td class="l">${scoreBar(m.score)}</td>
+        <td class="l">${l.id}</td>
+        <td>${money(l.price)}</td>
+        <td class="l">${l.beds}bd/${l.baths}ba · ${l.sqft.toLocaleString()}sf</td>
+        <td>${money(re.monthly_rent)}</td>
+        <td>${(re.confidence*100).toFixed(0)}%</td>
+        <td>${pct(m.cap_rate)}</td>
+        <td class="${m.cash_on_cash>=0?'pos':'neg'}">${pct(m.cash_on_cash)}</td>
+        <td>${signed(m.monthly_cash_flow)}/mo</td>
+        <td class="l">${m.meets_one_percent_rule ? '<span class="chip good">yes</span>' : '<span class="chip">no</span>'}</td>
+        <td class="l">${l.location.zip_code}</td>`;
+    }
     tr.onclick = () => showDetail(d, provider);
     tb.appendChild(tr);
   }
@@ -238,26 +257,50 @@ function kpi(v, k, cls="") { return `<div class="kpi"><div class="v ${cls}">${v}
 
 function showDetail(d, provider) {
   const l = d.listing, m = d.metrics, re = d.rent_estimate;
-  $("#detailTitle").textContent = `${l.id} — ${l.address || l.location.zip_code}`;
-  $("#detailKpis").innerHTML =
-    kpi(money(re.monthly_rent), `est. rent/mo (±${money((re.high-re.low)/2)})`) +
-    kpi(pct(m.cap_rate), "cap rate") +
-    kpi(pct(m.cash_on_cash), "cash-on-cash", m.cash_on_cash>=0?"pos":"neg") +
-    kpi(money(m.monthly_cash_flow)+"/mo", "cash flow", m.monthly_cash_flow>=0?"pos":"neg") +
-    kpi(m.score.toFixed(1), "ROI score");
-  const rows = [
-    ["List price", money(l.price)],
-    ["Type / built", `${l.property_type} · ${l.year_built || "?"}`],
-    ["Size", `${l.beds}bd / ${l.baths}ba / ${l.sqft.toLocaleString()} sqft`],
-    ["Rent estimate range", `${money(re.low)} – ${money(re.high)}`],
-    ["Estimate confidence", `${(re.confidence*100).toFixed(0)}% · ${re.comps_used} comps`],
-    ["Gross yield", pct(m.gross_yield)],
-    ["Net operating income", money(m.net_operating_income) + "/yr"],
-    ["Cash invested", money(m.cash_invested)],
-    ["Annual cash flow", money(m.annual_cash_flow)],
-    ["1% rule", m.meets_one_percent_rule ? "pass" : "fail"],
-  ];
-  $("#detailGrid").innerHTML = rows.map(([k,v]) => `<div class="row"><span class="muted">${k}</span><span>${v}</span></div>`).join("");
+  $("#detailTitle").textContent = `${l.id} — ${l.address || l.location.county || l.location.zip_code}`;
+
+  if (m.is_land) {
+    // Land / tax-sale view: land metrics up top, rental shown alongside (side by side).
+    $("#detailKpis").innerHTML =
+      kpi(money(l.price), "minimum bid") +
+      kpi(l.adjudged_value ? money(l.adjudged_value) : "—", "adjudged value") +
+      kpi(m.discount_to_adjudged>0 ? pct(m.discount_to_adjudged) : "—", "discount to adjudged", "pos") +
+      kpi(m.price_per_acre ? money(m.price_per_acre)+"/ac" : "—", "price per acre") +
+      kpi(m.land_score.toFixed(1), "land score");
+    const rows = [
+      ["Source", (l.source || "").toUpperCase() + " tax sale"],
+      ["County", l.location.county || "—"],
+      ["Sale date", l.sale_date || "—"],
+      ["Lot size", l.lot_acres ? l.lot_acres + " acres" : "—"],
+      ["Minimum bid", money(l.price)],
+      ["Adjudged value", l.adjudged_value ? money(l.adjudged_value) : "—"],
+      ["Discount to adjudged", m.discount_to_adjudged>0 ? pct(m.discount_to_adjudged) : "—"],
+      ["Price per acre", m.price_per_acre ? money(m.price_per_acre) : "—"],
+      ["Legal / address", l.address || "—"],
+      ["Rental score (side by side)", m.rental_score.toFixed(1) + (re.comps_used ? "" : " (no rent comps)")],
+    ];
+    $("#detailGrid").innerHTML = rows.map(([k,v]) => `<div class="row"><span class="muted">${k}</span><span>${v}</span></div>`).join("");
+  } else {
+    $("#detailKpis").innerHTML =
+      kpi(money(re.monthly_rent), `est. rent/mo (±${money((re.high-re.low)/2)})`) +
+      kpi(pct(m.cap_rate), "cap rate") +
+      kpi(pct(m.cash_on_cash), "cash-on-cash", m.cash_on_cash>=0?"pos":"neg") +
+      kpi(money(m.monthly_cash_flow)+"/mo", "cash flow", m.monthly_cash_flow>=0?"pos":"neg") +
+      kpi(m.score.toFixed(1), "ROI score");
+    const rows = [
+      ["List price", money(l.price)],
+      ["Type / built", `${l.property_type} · ${l.year_built || "?"}`],
+      ["Size", `${l.beds}bd / ${l.baths}ba / ${l.sqft.toLocaleString()} sqft`],
+      ["Rent estimate range", `${money(re.low)} – ${money(re.high)}`],
+      ["Estimate confidence", `${(re.confidence*100).toFixed(0)}% · ${re.comps_used} comps`],
+      ["Gross yield", pct(m.gross_yield)],
+      ["Net operating income", money(m.net_operating_income) + "/yr"],
+      ["Cash invested", money(m.cash_invested)],
+      ["Annual cash flow", money(m.annual_cash_flow)],
+      ["1% rule", m.meets_one_percent_rule ? "pass" : "fail"],
+    ];
+    $("#detailGrid").innerHTML = rows.map(([k,v]) => `<div class="row"><span class="muted">${k}</span><span>${v}</span></div>`).join("");
+  }
   $("#detailPanel").style.display = "";
   $("#detailPanel").scrollIntoView({behavior:"smooth", block:"nearest"});
 }

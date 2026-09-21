@@ -193,6 +193,33 @@ docker run --rm -p 8000:8000 \
 
 (`docker-compose.yml` reads these from your shell/`.env` automatically.)
 
+### MVBA tax-sale land
+
+MVBA (McCreary, Veselka, Bragg & Allen) runs Texas delinquent-property **tax
+sales** — often raw land — published as per-county bid sheets. The `mvba`
+provider fetches a listing URL you point it at and parses either a JSON feed or
+HTML `<table>` bid sheet (columns are mapped by fuzzy header name: minimum bid,
+adjudged value, acreage, legal description, county, sale date, account/cause no).
+
+```bash
+export MVBA_SALES_URL="https://…county…/tax-sale-listings"   # page or JSON feed
+python -m propertyroi scan --provider mvba
+
+# Realtor.com residential AND MVBA land in one ranked list:
+export RAPIDAPI_KEY=your_rapidapi_key
+python -m propertyroi scan --provider realtor,mvba
+```
+
+Any comma-separated combo works (`zillow,mvba`, `realtor,mvba`, …) and merges via
+`CombinedProvider`, skipping a source that errors.
+
+**Land scoring (side by side).** Raw land has no rent, so rental ROI is
+meaningless for it. For land / tax-sale listings the app computes land-specific
+metrics — **discount to adjudged value** and **price per acre** — and ranks them
+by a `land_score`, while still reporting the rental `rental_score` alongside
+(≈0 with no comps). Residential listings continue to rank by rental ROI. Each
+row/detail view adapts to the listing type.
+
 Each provider maps its source's sale and rental listings onto the same models,
 so the estimator, analyzer, and tester all work unchanged. Any provider
 implementing `propertyroi.providers.base.DataProvider` can be swapped in.
@@ -211,6 +238,7 @@ different listing:
 | `REALTOR_RAPIDAPI_HOST` | Realtor host | `us-real-estate.p.rapidapi.com` |
 | `REALTOR_SALE_PATH` | Realtor for-sale path | `v2/for-sale` |
 | `REALTOR_RENT_PATH` | Realtor for-rent path | `v2/for-rent` |
+| `MVBA_SALES_URL` | MVBA/county tax-sale listing page or JSON feed | — |
 
 The Realtor provider parses several common nesting shapes defensively, so minor
 schema differences between listings do not break it.
@@ -236,7 +264,7 @@ propertyroi/
   webapp.py          # stdlib web server: GUI + JSON API
   web/index.html     # single-page GUI (no external dependencies)
   cli.py             # `python -m propertyroi` commands: scan / analyze / serve / test
-  providers/         # JsonProvider (default), Zillow/Realtor/RentCast (live), CombinedProvider
+  providers/         # JsonProvider (default), Zillow/Realtor/RentCast/MVBA (live), CombinedProvider
 data/                # sample listings, comps, labeled eval set
 tests/               # unittest suite (run: python -m unittest discover -s tests)
 Dockerfile           # container image (runs `serve`)

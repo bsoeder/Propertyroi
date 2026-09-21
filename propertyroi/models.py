@@ -22,6 +22,7 @@ class Location:
     zip_code: str
     city: str = ""
     state: str = ""
+    county: str = ""
     latitude: Optional[float] = None
     longitude: Optional[float] = None
 
@@ -45,10 +46,21 @@ class Listing:
     hoa_monthly: float = 0.0
     property_tax_annual: Optional[float] = None
     url: str = ""
+    # Land / tax-sale fields (populated by the MVBA provider; None for residential).
+    source: str = ""                     # e.g. "mvba", "realtor", "zillow"
+    lot_acres: Optional[float] = None    # parcel size in acres (land)
+    adjudged_value: Optional[float] = None  # court-adjudged value at a tax sale
+    sale_date: str = ""                  # tax-sale date, if applicable
+
+    @property
+    def is_land(self) -> bool:
+        """True for raw-land / tax-sale parcels (no habitable structure)."""
+        return self.property_type == "land" or self.source == "mvba"
 
     def to_dict(self) -> dict:
         d = asdict(self)
         d["location"] = self.location.to_dict()
+        d["is_land"] = self.is_land
         return d
 
     @staticmethod
@@ -67,6 +79,10 @@ class Listing:
             hoa_monthly=float(d.get("hoa_monthly", 0.0)),
             property_tax_annual=d.get("property_tax_annual"),
             url=d.get("url", ""),
+            source=d.get("source", ""),
+            lot_acres=d.get("lot_acres"),
+            adjudged_value=d.get("adjudged_value"),
+            sale_date=d.get("sale_date", ""),
         )
 
 
@@ -139,7 +155,14 @@ class InvestmentAnalysis:
     cash_on_cash: float = 0.0         # annual cash flow / cash invested
     cash_invested: float = 0.0
     meets_one_percent_rule: bool = False
-    score: float = 0.0                # composite ranking score 0..100
+    score: float = 0.0                # composite ranking score 0..100 (primary)
+
+    # Land / tax-sale metrics (computed for land listings; 0 for residential).
+    is_land: bool = False
+    discount_to_adjudged: float = 0.0  # 1 - price/adjudged_value (higher = better)
+    price_per_acre: float = 0.0
+    land_score: float = 0.0            # 0..100 land-specific score
+    rental_score: float = 0.0         # 0..100 rental score (kept alongside land)
 
     def to_dict(self) -> dict:
         return {
@@ -159,5 +182,11 @@ class InvestmentAnalysis:
                 "cash_invested": round(self.cash_invested, 2),
                 "meets_one_percent_rule": self.meets_one_percent_rule,
                 "score": round(self.score, 1),
+                # Land metrics (side by side with rental metrics).
+                "is_land": self.is_land,
+                "discount_to_adjudged": round(self.discount_to_adjudged, 4),
+                "price_per_acre": round(self.price_per_acre, 2),
+                "land_score": round(self.land_score, 1),
+                "rental_score": round(self.rental_score, 1),
             },
         }
