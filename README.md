@@ -196,13 +196,17 @@ docker run --rm -p 8000:8000 \
 ### MVBA tax-sale land
 
 MVBA (McCreary, Veselka, Bragg & Allen) runs Texas delinquent-property **tax
-sales** — often raw land — published as per-county bid sheets. The `mvba`
-provider fetches a listing URL you point it at and parses either a JSON feed or
-HTML `<table>` bid sheet (columns are mapped by fuzzy header name: minimum bid,
-adjudged value, acreage, legal description, county, sale date, account/cause no).
+sales** — often raw land — published at `mvbalaw.com/tax-sales/`. That page is a
+**county index** linking to per-county **bid sheets** (usually PDFs). The `mvba`
+provider adapts to whatever `MVBA_SALES_URL` points at:
+
+- an **index page** → it crawls the county bid-sheet links and parses each one;
+- a **bid sheet** → an HTML `<table>`, a JSON feed, or a **PDF** is parsed into
+  land listings (columns mapped by fuzzy header name: minimum bid, adjudged
+  value, acreage, legal description, county, sale date, account/cause no.).
 
 ```bash
-export MVBA_SALES_URL="https://…county…/tax-sale-listings"   # page or JSON feed
+export MVBA_SALES_URL="https://mvbalaw.com/tax-sales/"   # index, a sheet, or a feed
 python -m propertyroi scan --provider mvba
 
 # Realtor.com residential AND MVBA land in one ranked list:
@@ -212,6 +216,11 @@ python -m propertyroi scan --provider realtor,mvba
 
 Any comma-separated combo works (`zillow,mvba`, `realtor,mvba`, …) and merges via
 `CombinedProvider`, skipping a source that errors.
+
+**PDF bid sheets** need the optional `pdfplumber` dependency
+(`pip install "propertyroi[mvba]"` or `pip install pdfplumber`). It's already
+included in the Docker image, so the containerized app (and the Pi) parse PDFs
+out of the box; HTML/JSON sources work without it.
 
 **Land scoring (side by side).** Raw land has no rent, so rental ROI is
 meaningless for it. For land / tax-sale listings the app computes land-specific

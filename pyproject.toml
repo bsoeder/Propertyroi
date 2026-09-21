@@ -18,6 +18,9 @@ propertyroi = "propertyroi.cli:main"
 
 [project.optional-dependencies]
 dev = ["ruff>=0.6"]
+# PDF parsing for MVBA tax-sale bid sheets (the `mvba` provider). HTML/JSON
+# sources work without it.
+mvba = ["pdfplumber>=0.11"]
 
 [tool.setuptools]
 packages = ["propertyroi", "propertyroi.providers"]
