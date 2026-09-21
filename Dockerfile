@@ -1,4 +1,5 @@
-# PropertyROI web GUI — standard-library Python, no runtime dependencies.
+# PropertyROI web GUI. The core is standard-library only; pdfplumber is added so
+# the MVBA provider can parse PDF tax-sale bid sheets.
 FROM python:3.12-slim
 
 # Don't buffer stdout (so logs show immediately) or write .pyc files.
@@ -9,6 +10,10 @@ ENV PYTHONUNBUFFERED=1 \
     PROPERTYROI_PROVIDER=json
 
 WORKDIR /app
+
+# Optional dependency: PDF parsing for MVBA bid sheets. Wheels only (no build
+# toolchain needed on amd64/arm64).
+RUN pip install --no-cache-dir "pdfplumber>=0.11"
 
 # Copy only what the app needs at runtime.
 COPY propertyroi/ ./propertyroi/

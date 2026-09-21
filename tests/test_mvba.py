@@ -49,7 +49,8 @@ class TestMvbaHelpers(unittest.TestCase):
 class TestMvbaProvider(unittest.TestCase):
     def _provider(self, body, ctype=""):
         p = MvbaProvider(url="https://example.com/sale")
-        p._fetch = lambda: (body, ctype)  # type: ignore
+        data = body if isinstance(body, bytes) else body.encode()
+        p._fetch = lambda url=None: (data, ctype)  # type: ignore
         return p
 
     def test_html_parsing_and_land_fields(self):
@@ -69,8 +70,9 @@ class TestMvbaProvider(unittest.TestCase):
         self.assertEqual(first.sale_date, "04/07/2026")
 
     def test_json_parsing(self):
-        p = self._provider('{"x":1}', "application/json")
-        p._fetch = lambda: (__import__("json").dumps(MVBA_JSON), "application/json")  # type: ignore
+        import json as _json
+        p = MvbaProvider(url="https://example.com/feed.json")
+        p._fetch = lambda url=None: (_json.dumps(MVBA_JSON).encode(), "application/json")  # type: ignore
         listings = p.search_listings()
         self.assertEqual(len(listings), 1)  # no-bid row dropped
         l = listings[0]
@@ -92,6 +94,77 @@ class TestMvbaProvider(unittest.TestCase):
     def test_no_rental_comps(self):
         p = self._provider(MVBA_HTML, "text/html")
         self.assertEqual(p.rental_comps(), [])
+
+    def test_index_crawl_follows_bid_sheet_links(self):
+        # An index page with no bid table, linking to a county bid sheet.
+        index_html = """
+        <html><body><h1>Upcoming Tax Sales</h1>
+          <a href="/wp-content/TaxUploads/FayetteBidSheet.html">Fayette County</a>
+          <a href="/about">About us</a>
+        </body></html>
+        """
+        base = "https://mvbalaw.com/tax-sales/"
+        sheet_url = "https://mvbalaw.com/wp-content/TaxUploads/FayetteBidSheet.html"
+
+        p = MvbaProvider(url=base)
+
+        def fake_fetch(url=None):
+            u = url or base
+            if u == base:
+                return index_html.encode(), "text/html"
+            if u == sheet_url:
+                return MVBA_HTML.encode(), "text/html"
+            raise AssertionError(f"unexpected fetch {u}")
+
+        p._fetch = fake_fetch  # type: ignore
+        listings = p.search_listings()
+        self.assertEqual(len(listings), 2)  # parsed from the crawled sheet
+        self.assertEqual(listings[0].id, "R12345")
+        self.assertEqual(listings[0].url, sheet_url)
+
+    def test_bid_sheet_link_extraction(self):
+        p = MvbaProvider(url="https://mvbalaw.com/tax-sales/")
+        html = ('<a href="/wp-content/TaxUploads/x.pdf">a</a>'
+                '<a href="https://mvbalaw.com/tax-sales/">self</a>'
+                '<a href="/privacy">no</a>'
+                '<a href="/county-tax-sale-info">yes</a>')
+        links = p._bid_sheet_links(html, "https://mvbalaw.com/tax-sales/")
+        self.assertIn("https://mvbalaw.com/wp-content/TaxUploads/x.pdf", links)
+        self.assertIn("https://mvbalaw.com/county-tax-sale-info", links)
+        self.assertNotIn("https://mvbalaw.com/privacy", links)
+        self.assertNotIn("https://mvbalaw.com/tax-sales/", links)  # skip self
+
+    def test_pdf_without_pdfplumber_raises_clear_error(self):
+        import builtins
+        p = MvbaProvider(url="https://mvbalaw.com/sheet.pdf")
+        p._fetch = lambda url=None: (b"%PDF-1.4 fake", "application/pdf")  # type: ignore
+        real_import = builtins.__import__
+
+        def no_pdfplumber(name, *a, **k):
+            if name == "pdfplumber":
+                raise ImportError("no pdfplumber")
+            return real_import(name, *a, **k)
+
+        builtins.__import__ = no_pdfplumber
+        try:
+            with self.assertRaises(ValueError) as ctx:
+                p.search_listings()
+            self.assertIn("pdfplumber", str(ctx.exception))
+        finally:
+            builtins.__import__ = real_import
+
+    def test_ingest_table_shared_mapping(self):
+        p = MvbaProvider(url="https://x/y")
+        table = [
+            ["Account", "County", "Legal Description", "Adjudged Value", "Minimum Bid"],
+            ["R1", "Bell", "3.0 AC ABST 9", "$30,000", "$5,000"],
+        ]
+        out = []
+        p._ingest_table(table, out, 0, "https://x/y")
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0].price, 5000.0)
+        self.assertEqual(out[0].adjudged_value, 30000.0)
+        self.assertEqual(out[0].lot_acres, 3.0)
 
     def test_requires_url(self):
         import os
