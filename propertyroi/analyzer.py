@@ -101,12 +101,18 @@ class Analyzer:
         analysis.cash_invested = cash_invested
         analysis.cash_on_cash = annual_cash_flow / cash_invested if cash_invested else 0.0
         analysis.meets_one_percent_rule = (monthly_rent / listing.price) >= 0.01 if listing.price else False
-        analysis.score = self._score(analysis)
+
+        # Compute rental and land scores side by side, then pick the primary
+        # ranking score based on what the listing actually is.
+        analysis.is_land = listing.is_land
+        analysis.rental_score = self._rental_score(analysis)
+        self._land_metrics(analysis)
+        analysis.score = analysis.land_score if analysis.is_land else analysis.rental_score
         return analysis
 
-    # -- ranking score ------------------------------------------------------
-    def _score(self, a: InvestmentAnalysis) -> float:
-        """Composite 0..100 score blending the key return metrics.
+    # -- ranking scores -----------------------------------------------------
+    def _rental_score(self, a: InvestmentAnalysis) -> float:
+        """Composite 0..100 rental score blending the key return metrics.
 
         Weighted so that cash-on-cash and cap rate dominate, with a bonus for
         the 1% rule and a penalty when the rent estimate is low-confidence.
@@ -122,6 +128,33 @@ class Analyzer:
         # Scale by estimate confidence so speculative estimates rank lower.
         conf = 0.6 + 0.4 * a.rent_estimate.confidence
         return 100.0 * raw * conf
+
+    def _land_metrics(self, a: InvestmentAnalysis) -> None:
+        """Compute land / tax-sale metrics: discount to adjudged value,
+        price per acre, and a land-specific 0..100 score.
+
+        For a delinquent-tax sale the key signal is how far the minimum bid
+        (the list price) sits below the court-adjudged value, plus a sane price
+        per acre. These apply to raw land where rental ROI is meaningless.
+        """
+        listing = a.listing
+        adj = listing.adjudged_value
+        if adj and adj > 0 and listing.price > 0:
+            a.discount_to_adjudged = 1.0 - (listing.price / adj)
+        if listing.lot_acres and listing.lot_acres > 0:
+            a.price_per_acre = listing.price / listing.lot_acres
+
+        if not a.is_land:
+            return
+
+        # A ~70% discount to adjudged value earns full marks; anything at or
+        # above adjudged value scores 0 on that axis.
+        disc = _clamp(a.discount_to_adjudged / 0.70)
+        # Reward listings that also have a resale rental signal (comps found).
+        rent_signal = _clamp(a.rent_estimate.confidence)
+        # Blend: discount dominates for tax-sale land.
+        raw = 0.8 * disc + 0.2 * rent_signal
+        a.land_score = 100.0 * raw
 
     # -- market scan --------------------------------------------------------
     def find_deals(

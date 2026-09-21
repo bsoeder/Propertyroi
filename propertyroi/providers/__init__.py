@@ -11,6 +11,7 @@ for _name, _mod, _cls in (
     ("RentCastProvider", ".rentcast", "RentCastProvider"),
     ("ZillowProvider", ".zillow", "ZillowProvider"),
     ("RealtorProvider", ".realtor", "RealtorProvider"),
+    ("MvbaProvider", ".mvba", "MvbaProvider"),
 ):
     try:  # pragma: no cover - optional imports
         _module = __import__(f"propertyroi.providers{_mod}", fromlist=[_cls])

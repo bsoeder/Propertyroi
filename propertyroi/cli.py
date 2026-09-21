@@ -38,7 +38,7 @@ from .providers import JsonProvider
 from .tester import AccuracyTester, load_labeled
 
 
-def _make_provider(name: str):
+def _single_provider(name: str):
     if name == "json":
         return JsonProvider()
     if name == "rentcast":
@@ -53,22 +53,45 @@ def _make_provider(name: str):
         from .providers.realtor import RealtorProvider
 
         return RealtorProvider()
-    if name == "combined":
-        # Pull from Zillow + Realtor at once (both need RAPIDAPI_KEY).
-        from .providers.combined import CombinedProvider
-        from .providers.realtor import RealtorProvider
-        from .providers.zillow import ZillowProvider
+    if name == "mvba":
+        from .providers.mvba import MvbaProvider
 
-        return CombinedProvider([ZillowProvider(), RealtorProvider()])
+        return MvbaProvider()
     raise SystemExit(f"Unknown provider: {name}")
 
 
-_PROVIDER_CHOICES = ["json", "rentcast", "zillow", "realtor", "combined"]
+def _make_provider(name: str):
+    """Build a provider by name.
+
+    Accepts an alias ("combined"), a single provider ("realtor", "mvba"), or a
+    comma-separated list ("realtor,mvba") that is merged via CombinedProvider —
+    e.g. Realtor.com residential listings plus MVBA tax-sale land.
+    """
+    from .providers.combined import CombinedProvider
+
+    if name == "combined":
+        name = "zillow,realtor"
+    if "," in name:
+        parts = [p.strip() for p in name.split(",") if p.strip()]
+        return CombinedProvider([_single_provider(p) for p in parts])
+    return _single_provider(name)
+
+
+_PROVIDER_CHOICES = ["json", "rentcast", "zillow", "realtor", "mvba", "combined", "realtor,mvba"]
 
 
 def _fmt_analysis_row(a) -> str:
     l = a.listing
     m = a
+    if a.is_land:
+        acres = f"{l.lot_acres:g}ac" if l.lot_acres else "land"
+        adj = f"${l.adjudged_value:>9,.0f}" if l.adjudged_value else "        —"
+        ppa = f"${m.price_per_acre:>7,.0f}/ac" if m.price_per_acre else "         —"
+        return (
+            f"{a.score:5.1f}  {l.id:<7} ${l.price:>10,.0f}  {acres:>6}  "
+            f"adj {adj}  disc {m.discount_to_adjudged:5.0%}  {ppa}  "
+            f"[land]  {l.location.county or l.location.zip_code}"
+        )
     flag = "1%" if m.meets_one_percent_rule else "  "
     return (
         f"{a.score:5.1f}  {l.id:<7} ${l.price:>10,.0f}  {l.beds}bd/{l.baths:g}ba "
@@ -99,8 +122,17 @@ def cmd_scan(args) -> int:
     if not deals:
         print("No listings matched your filters.")
         return 0
-    print(f"Found {len(deals)} listing(s), ranked by rental-ROI score:\n")
-    print("score  id       price          size          est. rent          cap      CoC      cash flow")
+    print(f"Found {len(deals)} listing(s), ranked by ROI score:\n")
+    all_land = all(d.is_land for d in deals)
+    any_land = any(d.is_land for d in deals)
+    if all_land:
+        print("score  id       price          size    adjudged     disc   price/acre   type    county")
+    else:
+        header = ("score  id       price          size          est. rent          "
+                  "cap      CoC      cash flow")
+        if any_land:
+            header += "   (land rows show adjudged/discount/$per-acre)"
+        print(header)
     print("-" * 108)
     for d in deals:
         print(_fmt_analysis_row(d))
@@ -184,9 +216,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="command", required=True)
 
     def add_common(sp):
-        sp.add_argument("--provider", default="json", choices=_PROVIDER_CHOICES,
-                        help="data source (default: bundled sample JSON; "
-                             "zillow/realtor/combined need RAPIDAPI_KEY)")
+        sp.add_argument("--provider", default="json", metavar="SOURCE",
+                        help="data source: " + ", ".join(_PROVIDER_CHOICES) +
+                             " (or any comma-separated combo, e.g. realtor,mvba). "
+                             "zillow/realtor need RAPIDAPI_KEY; mvba needs MVBA_SALES_URL")
         sp.add_argument("--down", type=float, help="down payment fraction, e.g. 0.25")
         sp.add_argument("--rate", type=float, help="mortgage annual rate, e.g. 0.07")
         sp.add_argument("--json", action="store_true", help="output raw JSON")
