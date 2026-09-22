@@ -43,6 +43,50 @@ def _make_provider(name: str):
     return make(name)
 
 
+def _single_with_creds(name: str, creds: dict):
+    """Build one provider, letting per-request credentials override the env.
+
+    `creds` may carry rapidapi_key, rentcast_key, mvba_url — each falls back to
+    the server environment when blank, so keys can come from the GUI or the env.
+    """
+    from .providers import JsonProvider
+
+    if name == "json":
+        return JsonProvider()
+    if name == "rentcast":
+        from .providers.rentcast import RentCastProvider
+
+        return RentCastProvider(api_key=creds.get("rentcast_key") or None)
+    if name == "zillow":
+        from .providers.zillow import ZillowProvider
+
+        return ZillowProvider(api_key=creds.get("rapidapi_key") or None)
+    if name == "realtor":
+        from .providers.realtor import RealtorProvider
+
+        return RealtorProvider(api_key=creds.get("rapidapi_key") or None)
+    if name == "mvba":
+        from .providers.mvba import MvbaProvider
+
+        return MvbaProvider(url=creds.get("mvba_url") or None)
+    raise ValueError(f"Unknown provider: {name}")
+
+
+def build_provider(name: str, creds: Optional[dict] = None):
+    """Build a provider by name/alias/comma-list using per-request credentials."""
+    creds = creds or {}
+    if not any(creds.values()):
+        return _make_provider(name)  # no GUI creds -> env-based path
+    from .providers.combined import CombinedProvider
+
+    if name == "combined":
+        name = "zillow,realtor"
+    if "," in name:
+        parts = [p.strip() for p in name.split(",") if p.strip()]
+        return CombinedProvider([_single_with_creds(p, creds) for p in parts])
+    return _single_with_creds(name, creds)
+
+
 def _assumptions(down: Optional[str], rate: Optional[str]) -> Assumptions:
     a = Assumptions()
     if down:
@@ -85,6 +129,14 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):  # quieter, single-line logs
         print(f"[web] {self.address_string()} {fmt % args}")
 
+    def _creds(self) -> dict:
+        """Per-request credentials from headers (never logged, unlike query params)."""
+        return {
+            "rapidapi_key": self.headers.get("X-RapidAPI-Key", ""),
+            "rentcast_key": self.headers.get("X-RentCast-Key", ""),
+            "mvba_url": self.headers.get("X-MVBA-URL", ""),
+        }
+
     # -- routing -----------------------------------------------------------
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -113,7 +165,7 @@ class Handler(BaseHTTPRequestHandler):
     def _api_scan(self, qs):
         provider = _first(qs, "provider") or _DEFAULT_PROVIDER
         analyzer = Analyzer(
-            _make_provider(provider),
+            build_provider(provider, self._creds()),
             RentEstimator(),
             _assumptions(_first(qs, "down"), _first(qs, "rate")),
         )
@@ -134,7 +186,7 @@ class Handler(BaseHTTPRequestHandler):
         if not listing_id:
             return self._send_json({"error": "id is required"}, 400)
         provider = _first(qs, "provider") or _DEFAULT_PROVIDER
-        p = _make_provider(provider)
+        p = build_provider(provider, self._creds())
         analyzer = Analyzer(p, RentEstimator(), _assumptions(_first(qs, "down"), _first(qs, "rate")))
         match = next((l for l in p.search_listings(zip_code=_first(qs, "zip")) if l.id == listing_id), None)
         if match is None:
