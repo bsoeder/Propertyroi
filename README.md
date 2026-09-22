@@ -41,6 +41,13 @@ tester and shows MAE / MAPE / R² plus per-property predictions). It runs on the
 bundled sample data out of the box; switch data sources with the dropdown (live
 sources need API keys — see below).
 
+**Entering keys in the GUI.** Expand **API keys / sources** under the search form
+to enter your RapidAPI key (Zillow/Realtor), RentCast key, and MVBA URL. They're
+saved in your browser's `localStorage` (this device only) and sent with each
+request as headers (`X-RapidAPI-Key`, `X-RentCast-Key`, `X-MVBA-URL`) — not query
+params, so they stay out of server logs. A blank field falls back to the
+server's env var. The dev server is plain HTTP, so use it on a trusted network.
+
 ### Web GUI (no Docker)
 
 ```bash
