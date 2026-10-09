@@ -61,6 +61,11 @@
   .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; font-size: 14px; }
   .detail-grid .row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 5px 0; }
   .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  details.keys { margin-top: 10px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; background: var(--panel2); }
+  details.keys summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+  .keys-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
+  .keybtn { padding: 8px 14px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 600; cursor: pointer; }
+  .keysaved { color: var(--good); }
   footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px; }
 </style>
 </head>
@@ -122,7 +127,21 @@
         <div><label>Limit</label><input name="limit" type="number" placeholder="all" /></div>
         <button class="primary" type="submit">Scan &amp; rank</button>
       </form>
-      <div class="hint">Live sources need config on the server: RAPIDAPI_KEY (Zillow/Realtor), RENTCAST_API_KEY, MVBA_SALES_URL (tax-sale land).</div>
+      <div class="hint">Live sources need a key. Enter yours below (kept in this browser only, sent per-request) or set them on the server.</div>
+      <details class="keys" id="keysPanel">
+        <summary>API keys / sources</summary>
+        <div class="keys-grid">
+          <div><label>RapidAPI key (Zillow / Realtor)</label>
+            <input id="k_rapidapi" type="password" autocomplete="off" placeholder="X-RapidAPI-Key"></div>
+          <div><label>RentCast API key</label>
+            <input id="k_rentcast" type="password" autocomplete="off" placeholder="RentCast key"></div>
+          <div><label>MVBA sales URL</label>
+            <input id="k_mvba" type="text" autocomplete="off" placeholder="https://mvbalaw.com/tax-sales/"></div>
+          <div style="align-self:end"><label>&nbsp;</label>
+            <button type="button" id="k_save" class="keybtn">Save keys</button></div>
+        </div>
+        <div class="hint">Stored with your browser's localStorage on this device. Served over your LAN in plaintext — use on a trusted network.</div>
+      </details>
     </div>
 
     <div id="scanMsg"></div>
@@ -175,6 +194,37 @@ const $ = (s, r=document) => r.querySelector(s);
 const money = n => (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString();
 const pct = n => (n*100).toFixed(1) + "%";
 
+// --- API keys (stored per-browser, sent as request headers) ---------------
+const KEY_FIELDS = {rapidapi: "k_rapidapi", rentcast: "k_rentcast", mvba: "k_mvba"};
+function loadKeys() {
+  try {
+    for (const [k, id] of Object.entries(KEY_FIELDS)) {
+      const v = localStorage.getItem("propertyroi." + k);
+      if (v != null) $("#" + id).value = v;
+    }
+  } catch (e) { /* private mode / blocked storage */ }
+}
+function saveKeys() {
+  try {
+    for (const [k, id] of Object.entries(KEY_FIELDS))
+      localStorage.setItem("propertyroi." + k, $("#" + id).value.trim());
+  } catch (e) { /* ignore */ }
+}
+function keyHeaders() {
+  const h = {};
+  const r = $("#k_rapidapi").value.trim(); if (r) h["X-RapidAPI-Key"] = r;
+  const c = $("#k_rentcast").value.trim(); if (c) h["X-RentCast-Key"] = c;
+  const m = $("#k_mvba").value.trim(); if (m) h["X-MVBA-URL"] = m;
+  return h;
+}
+loadKeys();
+$("#k_save").addEventListener("click", () => {
+  saveKeys();
+  const b = $("#k_save"); const t = b.textContent;
+  b.textContent = "Saved ✓"; b.classList.add("keysaved");
+  setTimeout(() => { b.textContent = t; b.classList.remove("keysaved"); }, 1500);
+});
+
 // Tabs
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
@@ -198,8 +248,9 @@ $("#scanForm").addEventListener("submit", async (e) => {
   const fd = new FormData(e.target);
   const p = new URLSearchParams();
   for (const [k, v] of fd.entries()) if (v) p.set(k, v);
+  saveKeys();
   try {
-    const r = await fetch("/api/scan?" + p.toString());
+    const r = await fetch("/api/scan?" + p.toString(), {headers: keyHeaders()});
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || "request failed");
     renderResults(data, fd.get("provider"));

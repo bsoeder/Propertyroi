@@ -20,10 +20,11 @@ class TestWebApp(unittest.TestCase):
         cls.server.shutdown()
         cls.server.server_close()
 
-    def _get(self, path):
+    def _get(self, path, headers=None):
         url = f"http://127.0.0.1:{self.port}{path}"
+        req = urllib.request.Request(url, headers=headers or {})
         try:
-            with urllib.request.urlopen(url, timeout=5) as r:
+            with urllib.request.urlopen(req, timeout=5) as r:
                 return r.status, r.read()
         except urllib.error.HTTPError as e:
             return e.code, e.read()
@@ -81,6 +82,45 @@ class TestWebApp(unittest.TestCase):
         status, body = self._get("/api/scan?provider=zillow&zip=78704")
         self.assertEqual(status, 400)
         self.assertIn("error", json.loads(body))
+
+    def test_json_scan_with_key_headers_still_works(self):
+        # Supplying a key header must not break the offline json provider.
+        status, body = self._get("/api/scan?zip=44107&limit=1", headers={"X-RapidAPI-Key": "abc"})
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body)["count"], 1)
+
+
+class TestBuildProvider(unittest.TestCase):
+    def test_credentials_injected(self):
+        from propertyroi.webapp import build_provider
+        z = build_provider("zillow", {"rapidapi_key": "abc123"})
+        self.assertEqual(z.api_key, "abc123")
+        m = build_provider("mvba", {"mvba_url": "https://x/y"})
+        self.assertEqual(m.url, "https://x/y")
+
+    def test_comma_list_with_creds(self):
+        from propertyroi.providers.combined import CombinedProvider
+        from propertyroi.webapp import build_provider
+        p = build_provider("zillow,mvba", {"rapidapi_key": "k", "mvba_url": "https://x"})
+        self.assertIsInstance(p, CombinedProvider)
+        self.assertEqual(len(p.providers), 2)
+
+    def test_blank_creds_use_env_path(self):
+        from propertyroi.providers import JsonProvider
+        from propertyroi.webapp import build_provider
+        self.assertIsInstance(build_provider("json", {}), JsonProvider)
+
+    def test_missing_key_still_errors(self):
+        import os
+
+        from propertyroi.webapp import build_provider
+        old = os.environ.pop("RAPIDAPI_KEY", None)
+        try:
+            with self.assertRaises((ValueError, SystemExit)):
+                build_provider("zillow", {})
+        finally:
+            if old is not None:
+                os.environ["RAPIDAPI_KEY"] = old
 
 
 if __name__ == "__main__":
