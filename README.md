@@ -8,6 +8,49 @@ Pure Python standard library. No dependencies, no API keys, runs offline against
 bundled sample data. An optional live provider (RentCast) is included for real
 data.
 
+## Two engines
+
+PropertyROI has two analysis engines over one shared data/estimation core:
+
+- **General ROI (long-term)** — `propertyroi.longterm` — buy-and-hold rental
+  analysis: gross yield, cap rate, cash flow, cash-on-cash, the 1% rule, plus
+  tax-sale land metrics.
+- **Short-term rental (STR)** — `propertyroi.shortterm` — prices a property under
+  **multiple strategies** (inspired by Avery Carl's *Short-Term Rental, Long-Term
+  Wealth*) and ranks/compares them.
+
+### STR strategies
+
+| Strategy | What it is | Regulation risk |
+|---|---|---|
+| `vacation` | Nightly rental in an established destination/leisure market (Carl's core play) | low |
+| `metro` | Urban/city nightly STR for business & events | high |
+| `midterm` | Furnished 30+ day stays (nurses, relocations, corporate) | low |
+| `arbitrage` | Lease a unit long-term and sublet it short-term (no purchase) | high |
+| `owner_occupied` | Live in it and STR part / while away (owner-occupant financing) | medium |
+
+Each strategy carries its own revenue multiple, occupancy, management/expense
+rates, capital model (purchase vs. lease vs. low-down owner-occupied), and
+regulation-risk weighting — all tunable, transparent assumptions (not advice).
+Revenue uses a real ADR + occupancy if you supply them, else a documented
+fallback that scales long-term rent by the strategy's multiple (flagged as lower
+confidence).
+
+```bash
+# Rank a market for one STR strategy
+python -m propertyroi str --zip 44107 --strategy vacation --limit 5
+
+# Analyze one listing with a real ADR + occupancy
+python -m propertyroi str --id L1019 --strategy vacation --adr 250 --occupancy 0.68
+
+# Compare ALL strategies for one listing
+python -m propertyroi str-compare --id L1019
+```
+
+In the web GUI they're the **General ROI (long-term)** and **Short-term rental**
+tabs; in the STR tab, click any result to compare all strategies for that
+listing.
+
 ## What it does
 
 1. **Explore for-sale listings** filtered by ZIP, price, beds, and type.
@@ -274,8 +317,10 @@ for deal in analyzer.find_deals(zip_code="44107", limit=5):
 ```
 propertyroi/
   models.py          # dataclasses: Listing, RentalComp, RentEstimate, InvestmentAnalysis
-  estimator.py       # comps-based rent estimation
-  analyzer.py        # ROI metrics + deal ranking
+  estimator.py       # comps-based rent estimation (shared)
+  analyzer.py        # long-term ROI metrics + deal ranking
+  longterm/          # general / long-term ROI engine (RoiAnalyzer)
+  shortterm/         # STR engine: strategies.py + analyzer.py (StrAnalyzer)
   tester.py          # accuracy evaluator (leave-one-out)
   webapp.py          # stdlib web server: GUI + JSON API
   web/index.html     # single-page GUI (no external dependencies)
@@ -296,7 +341,8 @@ The server (`python -m propertyroi serve`, port 8000) exposes:
 | `GET /` | the single-page GUI |
 | `GET /api/health` | liveness + active provider |
 | `GET /api/scan` | ranked deals — params: `zip`, `max_price`, `min_beds`, `type`, `limit`, `provider`, `down`, `rate` |
-| `GET /api/analyze` | one listing — params: `id`, `provider`, `down`, `rate` |
+| `GET /api/analyze` | one listing (long-term ROI) — params: `id`, `provider`, `down`, `rate` |
+| `GET /api/str` | short-term rental — params: `strategy`, `adr`, `occupancy`, `zip`, `max_price`, `min_beds`, `limit`, `id`, `compare=1` |
 | `GET /api/test` | accuracy report (JSON) against the labeled data set |
 
 ```bash

@@ -83,6 +83,28 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(status, 400)
         self.assertIn("error", json.loads(body))
 
+    def test_str_scan(self):
+        status, body = self._get("/api/str?strategy=vacation&zip=44107&limit=2")
+        self.assertEqual(status, 200)
+        d = json.loads(body)
+        self.assertEqual(d["mode"], "scan")
+        self.assertEqual(d["count"], 2)
+        self.assertIn("strategy", d["deals"][0])
+        self.assertIn("revenue", d["deals"][0])
+
+    def test_str_compare(self):
+        _, body = self._get("/api/str?strategy=vacation&zip=44107&limit=1")
+        lid = json.loads(body)["deals"][0]["listing"]["id"]
+        status, body = self._get(f"/api/str?compare=1&id={lid}")
+        self.assertEqual(status, 200)
+        d = json.loads(body)
+        self.assertEqual(d["mode"], "compare")
+        self.assertEqual(len(d["results"]), 5)
+
+    def test_str_compare_requires_id(self):
+        status, _ = self._get("/api/str?compare=1")
+        self.assertEqual(status, 400)
+
     def test_json_scan_with_key_headers_still_works(self):
         # Supplying a key header must not break the offline json provider.
         status, body = self._get("/api/scan?zip=44107&limit=1", headers={"X-RapidAPI-Key": "abc"})

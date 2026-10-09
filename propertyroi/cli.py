@@ -210,6 +210,112 @@ def _assumptions_from_args(args) -> Assumptions:
     return a
 
 
+# -- short-term rental commands --------------------------------------------
+def _fmt_str_row(r) -> str:
+    cap = f"{r.cap_rate:5.1%}" if r.cap_rate is not None else "   —"
+    return (
+        f"{r.score:5.1f}  {r.listing.id:<7} ${r.listing.price:>9,.0f}  "
+        f"{r.strategy_key:<14} gross ${r.gross_annual_revenue:>8,.0f}/yr  "
+        f"CoC {r.cash_on_cash:6.1%}  cap {cap}  cf ${r.monthly_cash_flow:>6,.0f}/mo  "
+        f"occ {r.occupancy:.0%}  reg {r.regulation_risk}"
+    )
+
+
+def _str_analyzer(args):
+    from .shortterm import StrAnalyzer
+    provider = _make_provider(args.provider)
+    return StrAnalyzer(provider), provider
+
+
+def cmd_str(args) -> int:
+    try:
+        analyzer, provider = _str_analyzer(args)
+    except (ValueError, SystemExit) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    if args.id:
+        match = next((l for l in provider.search_listings(zip_code=args.zip) if l.id == args.id), None)
+        if match is None:
+            match = next((l for l in provider.search_listings() if l.id == args.id), None)
+        if match is None:
+            print(f"Listing {args.id} not found.", file=sys.stderr)
+            return 1
+        r = analyzer.analyze(match, args.strategy, adr=args.adr, occupancy=args.occupancy)
+        if args.json:
+            print(json.dumps(r.to_dict(), indent=2))
+            return 0
+        _print_str_detail(r)
+        return 0
+    # scan + rank for one strategy
+    deals = analyzer.find_deals(
+        strategy=args.strategy, zip_code=args.zip, max_price=args.max_price,
+        min_beds=args.min_beds, property_type=args.type,
+        adr=args.adr, occupancy=args.occupancy, limit=args.limit,
+    )
+    if args.json:
+        print(json.dumps([d.to_dict() for d in deals], indent=2))
+        return 0
+    if not deals:
+        print("No listings matched your filters.")
+        return 0
+    print(f"Found {len(deals)} listing(s) for STR strategy '{args.strategy}', ranked by STR score:\n")
+    print("score  id       price       strategy       gross revenue    CoC     cap    cash flow   occ   reg")
+    print("-" * 108)
+    for d in deals:
+        print(_fmt_str_row(d))
+    return 0
+
+
+def cmd_str_compare(args) -> int:
+    try:
+        analyzer, provider = _str_analyzer(args)
+    except (ValueError, SystemExit) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    match = next((l for l in provider.search_listings(zip_code=args.zip) if l.id == args.id), None)
+    if match is None:
+        match = next((l for l in provider.search_listings() if l.id == args.id), None)
+    if match is None:
+        print(f"Listing {args.id} not found.", file=sys.stderr)
+        return 1
+    results = analyzer.compare(match, adr=args.adr, occupancy=args.occupancy)
+    if args.json:
+        print(json.dumps([r.to_dict() for r in results], indent=2))
+        return 0
+    l = match
+    print(f"STR strategy comparison for {l.id} - {l.address or l.location.zip_code}")
+    print(f"  {l.beds}bd / {l.baths:g}ba / {l.sqft:,} sqft  ${l.price:,.0f}  "
+          f"(LTR rent ~${results[0].ltr_monthly_rent:,.0f}/mo)\n")
+    print("score  id       price       strategy       gross revenue    CoC     cap    cash flow   occ   reg")
+    print("-" * 108)
+    for r in results:
+        print(_fmt_str_row(r))
+    print(f"\nBest fit: {results[0].strategy_name} (score {results[0].score:.1f})")
+    return 0
+
+
+def _print_str_detail(r) -> None:
+    l = r.listing
+    print(f"STR analysis - {l.id} ({r.strategy_name})")
+    print(f"  {l.beds}bd / {l.baths:g}ba / {l.sqft:,} sqft  ${l.price:,.0f}  reg risk: {r.regulation_risk}")
+    print()
+    print(f"  Revenue        : ${r.gross_annual_revenue:,.0f}/yr  "
+          f"(ADR ${r.adr:,.0f} x {r.occupancy:.0%} occ, source: {r.revenue_source})")
+    print(f"  Confidence     : {r.confidence:.0%}")
+    print(f"  Operating exp  : ${r.operating_expenses:,.0f}/yr  (mgmt ${r.management:,.0f}, "
+          f"var ${r.variable_opex:,.0f}, tax ${r.property_tax:,.0f}, ins ${r.insurance:,.0f})")
+    print(f"  NOI            : ${r.net_operating_income:,.0f}/yr")
+    print(f"  Furnishing     : ${r.furnishing:,.0f}")
+    label = "Lease" if r.cap_rate is None else "Debt service"
+    print(f"  {label:<14} : ${r.debt_or_lease_annual:,.0f}/yr")
+    print(f"  Cash invested  : ${r.cash_invested:,.0f}")
+    print(f"  Cash flow      : ${r.monthly_cash_flow:,.0f}/mo  (${r.annual_cash_flow:,.0f}/yr)")
+    print(f"  Cash-on-cash   : {r.cash_on_cash:.1%}")
+    if r.cap_rate is not None:
+        print(f"  Cap rate       : {r.cap_rate:.1%}")
+    print(f"  STR score      : {r.score:.1f}/100")
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="propertyroi", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -249,6 +355,34 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--json", action="store_true", help="output raw JSON")
     sp.add_argument("--verbose", action="store_true", help="show per-property predictions")
     sp.set_defaults(func=cmd_test)
+
+    # -- short-term rental (STR) --
+    from .shortterm import strategy_keys
+    strat_help = "STR strategy: " + ", ".join(strategy_keys())
+
+    sp = sub.add_parser("str", help="short-term rental: rank a market, or analyze one listing, for a strategy")
+    sp.add_argument("--provider", default="json", metavar="SOURCE",
+                    help="data source (see `scan` help)")
+    sp.add_argument("--strategy", default="vacation", help=strat_help)
+    sp.add_argument("--adr", type=float, help="average daily rate ($); overrides the estimate")
+    sp.add_argument("--occupancy", type=float, help="occupancy fraction 0..1")
+    sp.add_argument("--id", help="analyze a single listing by id (else scan+rank)")
+    sp.add_argument("--zip", help="ZIP code to search")
+    sp.add_argument("--max-price", type=float, help="maximum list price")
+    sp.add_argument("--min-beds", type=int, help="minimum bedrooms")
+    sp.add_argument("--type", help="property type filter")
+    sp.add_argument("--limit", type=int, help="max results")
+    sp.add_argument("--json", action="store_true", help="output raw JSON")
+    sp.set_defaults(func=cmd_str)
+
+    sp = sub.add_parser("str-compare", help="compare all STR strategies on one listing")
+    sp.add_argument("--provider", default="json", metavar="SOURCE", help="data source")
+    sp.add_argument("--id", required=True, help="listing id")
+    sp.add_argument("--zip", help="ZIP code hint")
+    sp.add_argument("--adr", type=float, help="average daily rate ($)")
+    sp.add_argument("--occupancy", type=float, help="occupancy fraction 0..1")
+    sp.add_argument("--json", action="store_true", help="output raw JSON")
+    sp.set_defaults(func=cmd_str_compare)
     return p
 
 
