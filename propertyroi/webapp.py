@@ -153,6 +153,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._api_analyze(qs)
             if route == "/api/test":
                 return self._api_test(qs)
+            if route == "/api/str":
+                return self._api_str(qs)
             return self._send_json({"error": f"unknown route {route}"}, 404)
         except ValueError as e:
             # e.g. missing API key or bad numeric param
@@ -200,6 +202,52 @@ class Handler(BaseHTTPRequestHandler):
         data_path = os.path.join(_DATA_DIR, "eval_labeled.json")
         report = AccuracyTester(RentEstimator()).evaluate(load_labeled(data_path))
         self._send_json(report.to_dict(include_predictions=True))
+
+    def _api_str(self, qs):
+        from .shortterm import StrAnalyzer
+        provider = build_provider(_first(qs, "provider") or _DEFAULT_PROVIDER, self._creds())
+        analyzer = StrAnalyzer(provider, RentEstimator())
+        adr = _first(qs, "adr")
+        occ = _first(qs, "occupancy")
+        adr = float(adr) if adr else None
+        occ = float(occ) if occ else None
+        strategy = _first(qs, "strategy") or "vacation"
+        listing_id = _first(qs, "id")
+        # compare=1 -> all strategies on one listing
+        if _first(qs, "compare") in ("1", "true", "yes"):
+            if not listing_id:
+                return self._send_json({"error": "id is required for compare"}, 400)
+            match = self._find_listing(provider, listing_id, _first(qs, "zip"))
+            if match is None:
+                return self._send_json({"error": f"listing {listing_id} not found"}, 404)
+            results = analyzer.compare(match, adr=adr, occupancy=occ)
+            return self._send_json({"mode": "compare", "results": [r.to_dict() for r in results]})
+        if listing_id:
+            match = self._find_listing(provider, listing_id, _first(qs, "zip"))
+            if match is None:
+                return self._send_json({"error": f"listing {listing_id} not found"}, 404)
+            return self._send_json({"mode": "single",
+                                    "result": analyzer.analyze(match, strategy, adr=adr, occupancy=occ).to_dict()})
+        max_price = _first(qs, "max_price")
+        min_beds = _first(qs, "min_beds")
+        limit = _first(qs, "limit")
+        deals = analyzer.find_deals(
+            strategy=strategy, zip_code=_first(qs, "zip"),
+            max_price=float(max_price) if max_price else None,
+            min_beds=int(min_beds) if min_beds else None,
+            property_type=_first(qs, "type"),
+            adr=adr, occupancy=occ,
+            limit=int(limit) if limit else None,
+        )
+        self._send_json({"mode": "scan", "strategy": strategy,
+                         "count": len(deals), "deals": [d.to_dict() for d in deals]})
+
+    @staticmethod
+    def _find_listing(provider, listing_id, zip_code):
+        match = next((l for l in provider.search_listings(zip_code=zip_code) if l.id == listing_id), None)
+        if match is None:
+            match = next((l for l in provider.search_listings() if l.id == listing_id), None)
+        return match
 
 
 def serve(host: str = "0.0.0.0", port: int = 8000) -> None:

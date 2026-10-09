@@ -78,7 +78,8 @@
 
 <main>
   <div class="tabs">
-    <div class="tab active" data-tab="scan">Find deals</div>
+    <div class="tab active" data-tab="scan">General ROI (long-term)</div>
+    <div class="tab" data-tab="str">Short-term rental</div>
     <div class="tab" data-tab="accuracy">Estimator accuracy</div>
   </div>
 
@@ -165,6 +166,68 @@
     </div>
   </section>
 
+  <!-- SHORT-TERM RENTAL -->
+  <section id="tab-str" style="display:none">
+    <div class="panel">
+      <form class="controls" id="strForm">
+        <div><label>Strategy</label>
+          <select name="strategy" id="strStrategy">
+            <option value="vacation">Vacation-rental market</option>
+            <option value="metro">Metro / urban STR</option>
+            <option value="midterm">Midterm (30+ day)</option>
+            <option value="arbitrage">Rental arbitrage</option>
+            <option value="owner_occupied">Owner-occupied / house-hack</option>
+          </select>
+        </div>
+        <div><label>ZIP code</label><input name="zip" placeholder="e.g. 44107" /></div>
+        <div><label>Max price ($)</label><input name="max_price" type="number" placeholder="any" /></div>
+        <div><label>Min beds</label><input name="min_beds" type="number" placeholder="any" /></div>
+        <div><label>ADR ($/night, optional)</label><input name="adr" type="number" placeholder="estimate" /></div>
+        <div><label>Occupancy (optional)</label><input name="occupancy" type="number" step="0.01" min="0" max="1" placeholder="strategy default" /></div>
+        <div><label>Data source</label>
+          <select name="provider">
+            <option value="json">sample (offline)</option>
+            <option value="zillow">Zillow (live)</option>
+            <option value="realtor">Realtor.com (live)</option>
+            <option value="combined">Zillow + Realtor</option>
+            <option value="rentcast">RentCast (live)</option>
+          </select>
+        </div>
+        <div><label>Limit</label><input name="limit" type="number" placeholder="all" /></div>
+        <button class="primary" type="submit">Scan &amp; rank (STR)</button>
+      </form>
+      <div class="hint">No ADR? The estimate scales long-term rent by the strategy's revenue multiple (lower confidence). Enter a real ADR/occupancy for a true underwrite. Click any result to compare all strategies for that listing.</div>
+    </div>
+
+    <div id="strMsg"></div>
+    <div class="panel" id="strResultsPanel" style="display:none">
+      <h2 id="strResultsTitle">Results</h2>
+      <div style="overflow-x:auto">
+        <table id="strTable">
+          <thead><tr>
+            <th class="l">Score</th><th class="l">ID</th><th>Price</th>
+            <th>Gross rev/yr</th><th>ADR</th><th>Occ</th><th>Cap</th><th>CoC</th><th>Cash flow</th><th class="l">Reg</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel" id="strComparePanel" style="display:none">
+      <h2 id="strCompareTitle">Strategy comparison</h2>
+      <div class="kpis" id="strCompareKpis"></div>
+      <div style="overflow-x:auto; margin-top:12px">
+        <table id="strCompareTable">
+          <thead><tr>
+            <th class="l">Score</th><th class="l">Strategy</th><th>Gross rev/yr</th>
+            <th>ADR</th><th>Occ</th><th>Cap</th><th>CoC</th><th>Cash flow</th><th>Cash in</th><th class="l">Reg</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <!-- ACCURACY -->
   <section id="tab-accuracy" style="display:none">
     <div class="panel">
@@ -226,11 +289,14 @@ $("#k_save").addEventListener("click", () => {
 });
 
 // Tabs
+const TAB_KEYS = ["scan", "str", "accuracy"];
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
   t.classList.add("active");
-  $("#tab-scan").style.display = t.dataset.tab === "scan" ? "" : "none";
-  $("#tab-accuracy").style.display = t.dataset.tab === "accuracy" ? "" : "none";
+  for (const k of TAB_KEYS) {
+    const sec = document.getElementById("tab-" + k);
+    if (sec) sec.style.display = (t.dataset.tab === k) ? "" : "none";
+  }
 });
 
 function scoreBar(score) {
@@ -386,6 +452,104 @@ $("#runTest").addEventListener("click", async () => {
   } finally { btn.disabled = false; }
 });
 function signedTxt(n){ return (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString(); }
+
+// --- Short-term rental ----------------------------------------------------
+const REG_CHIP = {low:"good", medium:"", high:"bad"};
+function regChip(r){ return `<span class="chip ${REG_CHIP[r]||''}">${r}</span>`; }
+function capTxt(c){ return (c==null) ? "—" : pct(c); }
+
+$("#strForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = $("#strForm button"); btn.disabled = true;
+  $("#strMsg").innerHTML = `<div class="msg">Scanning…</div>`;
+  $("#strComparePanel").style.display = "none";
+  const fd = new FormData(e.target);
+  const p = new URLSearchParams();
+  for (const [k, v] of fd.entries()) if (v) p.set(k, v);
+  saveKeys();
+  try {
+    const r = await fetch("/api/str?" + p.toString(), {headers: keyHeaders()});
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || "request failed");
+    renderStr(data);
+    $("#strMsg").innerHTML = "";
+  } catch (err) {
+    $("#strMsg").innerHTML = `<div class="msg err">${err.message}</div>`;
+    $("#strResultsPanel").style.display = "none";
+  } finally { btn.disabled = false; }
+});
+
+function strRow(d, clickId) {
+  const l = d.listing, m = d.metrics, rev = d.revenue;
+  const tr = document.createElement("tr");
+  tr.className = "clickable";
+  tr.innerHTML = `
+    <td class="l">${scoreBar(m.score)}</td>
+    <td class="l">${l.id}</td>
+    <td>${money(l.price)}</td>
+    <td>${money(rev.gross_annual_revenue)}</td>
+    <td>${money(rev.adr)}</td>
+    <td>${(rev.occupancy*100).toFixed(0)}%</td>
+    <td>${capTxt(m.cap_rate)}</td>
+    <td class="${m.cash_on_cash>=0?'pos':'neg'}">${pct(m.cash_on_cash)}</td>
+    <td>${signed(m.monthly_cash_flow)}/mo</td>
+    <td class="l">${regChip(d.strategy.regulation_risk)}</td>`;
+  if (clickId) tr.onclick = () => strCompare(clickId);
+  return tr;
+}
+
+function renderStr(data) {
+  const tb = $("#strTable tbody"); tb.innerHTML = "";
+  $("#strResultsTitle").textContent = `${data.count} listing(s) · strategy: ${data.strategy} · ranked by STR score`;
+  if (!data.count) { $("#strMsg").innerHTML = `<div class="msg">No listings matched.</div>`; $("#strResultsPanel").style.display="none"; return; }
+  for (const d of data.deals) tb.appendChild(strRow(d, d.listing.id));
+  $("#strResultsPanel").style.display = "";
+}
+
+async function strCompare(id) {
+  $("#strMsg").innerHTML = `<div class="msg">Comparing strategies for ${id}…</div>`;
+  const adr = $('#strForm [name=adr]').value.trim();
+  const occ = $('#strForm [name=occupancy]').value.trim();
+  const prov = $('#strForm [name=provider]').value;
+  const p = new URLSearchParams({compare: "1", id, provider: prov});
+  if (adr) p.set("adr", adr);
+  if (occ) p.set("occupancy", occ);
+  try {
+    const r = await fetch("/api/str?" + p.toString(), {headers: keyHeaders()});
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || "request failed");
+    const rows = data.results;
+    const l = rows[0].listing, best = rows[0];
+    $("#strCompareTitle").textContent = `${l.id} — all strategies (LTR rent ~${money(rows[0].revenue.ltr_monthly_rent)}/mo)`;
+    $("#strCompareKpis").innerHTML =
+      kpi(best.strategy.name, "best-fit strategy") +
+      kpi(best.metrics.score.toFixed(1), "STR score") +
+      kpi(pct(best.metrics.cash_on_cash), "cash-on-cash", best.metrics.cash_on_cash>=0?"pos":"neg") +
+      kpi(money(best.metrics.monthly_cash_flow)+"/mo", "cash flow", best.metrics.monthly_cash_flow>=0?"pos":"neg");
+    const tb = $("#strCompareTable tbody"); tb.innerHTML = "";
+    for (const d of rows) {
+      const m = d.metrics, rev = d.revenue;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="l">${scoreBar(m.score)}</td>
+        <td class="l">${d.strategy.name}</td>
+        <td>${money(rev.gross_annual_revenue)}</td>
+        <td>${money(rev.adr)}</td>
+        <td>${(rev.occupancy*100).toFixed(0)}%</td>
+        <td>${capTxt(m.cap_rate)}</td>
+        <td class="${m.cash_on_cash>=0?'pos':'neg'}">${pct(m.cash_on_cash)}</td>
+        <td>${signed(m.monthly_cash_flow)}/mo</td>
+        <td>${money(m.cash_invested)}</td>
+        <td class="l">${regChip(d.strategy.regulation_risk)}</td>`;
+      tb.appendChild(tr);
+    }
+    $("#strComparePanel").style.display = "";
+    $("#strComparePanel").scrollIntoView({behavior:"smooth", block:"nearest"});
+    $("#strMsg").innerHTML = "";
+  } catch (err) {
+    $("#strMsg").innerHTML = `<div class="msg err">${err.message}</div>`;
+  }
+}
 </script>
 </body>
 </html>
