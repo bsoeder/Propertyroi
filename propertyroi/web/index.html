@@ -122,7 +122,10 @@
             <option value="mvba">MVBA tax-sale land (live)</option>
             <option value="realtor,mvba">Realtor + MVBA land</option>
             <option value="combined">Zillow + Realtor</option>
-            <option value="rentcast">RentCast (live)</option>
+            <option value="rentcast">RentCast (free tier)</option>
+            <option value="rentcast,hud">RentCast + HUD rents (free/cheap)</option>
+            <option value="mvba,hud">MVBA land + HUD rents (free)</option>
+            <option value="hud">HUD rents only (free, no listings)</option>
           </select>
         </div>
         <div><label>Limit</label><input name="limit" type="number" placeholder="all" /></div>
@@ -138,6 +141,8 @@
             <input id="k_rentcast" type="password" autocomplete="off" placeholder="RentCast key"></div>
           <div><label>MVBA sales URL</label>
             <input id="k_mvba" type="text" autocomplete="off" placeholder="https://mvbalaw.com/tax-sales/"></div>
+          <div><label>HUD API token (free rents)</label>
+            <input id="k_hud" type="password" autocomplete="off" placeholder="HUD_API_TOKEN"></div>
           <div style="align-self:end"><label>&nbsp;</label>
             <button type="button" id="k_save" class="keybtn">Save keys</button></div>
         </div>
@@ -190,7 +195,8 @@
             <option value="zillow">Zillow (live)</option>
             <option value="realtor">Realtor.com (live)</option>
             <option value="combined">Zillow + Realtor</option>
-            <option value="rentcast">RentCast (live)</option>
+            <option value="rentcast">RentCast (free tier)</option>
+            <option value="rentcast,hud">RentCast + HUD rents (free/cheap)</option>
           </select>
         </div>
         <div><label>Limit</label><input name="limit" type="number" placeholder="all" /></div>
@@ -258,7 +264,7 @@ const money = n => (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString();
 const pct = n => (n*100).toFixed(1) + "%";
 
 // --- API keys (stored per-browser, sent as request headers) ---------------
-const KEY_FIELDS = {rapidapi: "k_rapidapi", rentcast: "k_rentcast", mvba: "k_mvba"};
+const KEY_FIELDS = {rapidapi: "k_rapidapi", rentcast: "k_rentcast", mvba: "k_mvba", hud: "k_hud"};
 function loadKeys() {
   try {
     for (const [k, id] of Object.entries(KEY_FIELDS)) {
@@ -278,6 +284,7 @@ function keyHeaders() {
   const r = $("#k_rapidapi").value.trim(); if (r) h["X-RapidAPI-Key"] = r;
   const c = $("#k_rentcast").value.trim(); if (c) h["X-RentCast-Key"] = c;
   const m = $("#k_mvba").value.trim(); if (m) h["X-MVBA-URL"] = m;
+  const u = $("#k_hud").value.trim(); if (u) h["X-HUD-Token"] = u;
   return h;
 }
 loadKeys();
