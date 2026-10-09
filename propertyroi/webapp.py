@@ -69,6 +69,10 @@ def _single_with_creds(name: str, creds: dict):
         from .providers.mvba import MvbaProvider
 
         return MvbaProvider(url=creds.get("mvba_url") or None)
+    if name == "hud":
+        from .providers.hud import HudFmrProvider
+
+        return HudFmrProvider(token=creds.get("hud_token") or None)
     raise ValueError(f"Unknown provider: {name}")
 
 
@@ -135,6 +139,7 @@ class Handler(BaseHTTPRequestHandler):
             "rapidapi_key": self.headers.get("X-RapidAPI-Key", ""),
             "rentcast_key": self.headers.get("X-RentCast-Key", ""),
             "mvba_url": self.headers.get("X-MVBA-URL", ""),
+            "hud_token": self.headers.get("X-HUD-Token", ""),
         }
 
     # -- routing -----------------------------------------------------------

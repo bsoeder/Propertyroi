@@ -208,7 +208,34 @@ python -m propertyroi test --data path/to/your_labeled.json --json
 Labeled data format (`data/eval_labeled.json`): each record is a listing plus an
 `actual_rent` field.
 
-## Using real data (Zillow, Realtor.com, RentCast)
+## Real data: what's free or cheap
+
+| Source | `--provider` | Cost | Gives |
+|---|---|---|---|
+| **HUD Fair Market Rents** | `hud` | **Free** (free token) | Rents by ZIP (studio–4BR), nationwide — no listings |
+| **MVBA tax sales** | `mvba` | **Free** | For-sale *land* (Texas tax auctions) |
+| **RentCast** | `rentcast` | **Free tier** (~50 calls/mo), then paid | Sale listings + rentals |
+| Zillow / Realtor.com | `zillow` / `realtor` | Paid (RapidAPI) | Sale listings + rentals |
+
+HUD and MVBA have no cost at all. Because HUD is rentals-only, combine it with a
+listings source:
+
+```bash
+# Fully free: tax-sale land listings + HUD rent baseline
+export HUD_API_TOKEN=your_free_hud_token      # huduser.gov/portal/dataset/fmr-api.html
+export MVBA_SALES_URL="https://mvbalaw.com/tax-sales/"
+python -m propertyroi scan --provider mvba,hud
+
+# Cheapest real listings: RentCast free tier (+ HUD rents)
+export RENTCAST_API_KEY=your_rentcast_key     # free tier at rentcast.io
+python -m propertyroi scan --zip 44107 --provider rentcast,hud
+python -m propertyroi str  --zip 44107 --provider rentcast,hud --strategy vacation
+```
+
+In the GUI, pick one of the **free/cheap** data sources from the dropdown and put
+your free HUD token (and RentCast key) in the **API keys / sources** panel.
+
+## Using paid data (Zillow, Realtor.com, RentCast)
 
 > **Note on Zillow & Realtor.com.** Neither offers a free public listings API
 > (Zillow retired its public API), and scraping their sites directly violates
@@ -298,6 +325,8 @@ different listing:
 | `REALTOR_SALE_PATH` | Realtor for-sale path | `v2/for-sale` |
 | `REALTOR_RENT_PATH` | Realtor for-rent path | `v2/for-rent` |
 | `MVBA_SALES_URL` | MVBA/county tax-sale listing page or JSON feed | — |
+| `HUD_API_TOKEN` | Free HUD Fair Market Rents token (huduser.gov) | — |
+| `HUD_FMR_YEAR` | FMR data year (optional; latest if unset) | latest |
 
 The Realtor provider parses several common nesting shapes defensively, so minor
 schema differences between listings do not break it.
