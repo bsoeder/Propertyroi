@@ -58,7 +58,7 @@ class Analyzer:
         self.assumptions = assumptions or Assumptions()
         # Cache rental comps per (zip, property_type) so a market scan makes one
         # rentals call per area instead of one per listing (critical for live,
-        # rate-limited providers like RentCast).
+        # rate-limited live providers like Zillow/Realtor).
         self._comps_cache: dict = {}
 
     def _comps_for(self, listing: Listing):

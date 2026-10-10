@@ -10,7 +10,7 @@ Get a free token at https://www.huduser.gov/portal/dataset/fmr-api.html and set
 it as HUD_API_TOKEN. This provider turns the per-bedroom FMR figures for a ZIP
 into synthetic rental comps (with representative sizes) that the comps estimator
 can weigh like any other comps. It returns no for-sale listings, so combine it
-with a listings source, e.g. ``--provider mvba,hud`` or ``rentcast,hud``.
+with a listings source, e.g. ``--provider mvba,hud`` or ``csv,hud``.
 
 Only the standard library is used.
 """

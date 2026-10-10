@@ -5,8 +5,9 @@ rental data, rank them by return on investment — and **measure how accurate th
 rent estimator is** with a built-in tester.
 
 Pure Python standard library. No dependencies, no API keys, runs offline against
-bundled sample data. An optional live provider (RentCast) is included for real
-data.
+bundled sample data. Real data plugs in with no key (a free Redfin/Realtor CSV
+export, HUD rents, MVBA tax-sale land) or with a paid key (Zillow/Realtor via
+RapidAPI).
 
 ## Two engines
 
@@ -119,11 +120,12 @@ bundled sample data out of the box; switch data sources with the dropdown (live
 sources need API keys — see below).
 
 **Entering keys in the GUI.** Expand **API keys / sources** under the search form
-to enter your RapidAPI key (Zillow/Realtor), RentCast key, and MVBA URL. They're
-saved in your browser's `localStorage` (this device only) and sent with each
-request as headers (`X-RapidAPI-Key`, `X-RentCast-Key`, `X-MVBA-URL`) — not query
-params, so they stay out of server logs. A blank field falls back to the
-server's env var. The dev server is plain HTTP, so use it on a trusted network.
+to enter your RapidAPI key (Zillow/Realtor), free HUD token, MVBA URL, and CSV
+path. They're saved in your browser's `localStorage` (this device only) and sent
+with each request as headers (`X-RapidAPI-Key`, `X-HUD-Token`, `X-MVBA-URL`,
+`X-CSV-Path`) — not query params, so they stay out of server logs. A blank field
+falls back to the server's env var. The dev server is plain HTTP, so use it on a
+trusted network.
 
 ### Web GUI (no Docker)
 
@@ -249,7 +251,6 @@ Labeled data format (`data/eval_labeled.json`): each record is a listing plus an
 | **CSV export** | `csv` | **Free, no key** | Real for-sale listings from a Redfin/Realtor CSV download |
 | **HUD Fair Market Rents** | `hud` | **Free** (free token) | Rents by ZIP (studio–4BR), nationwide — no listings |
 | **MVBA tax sales** | `mvba` | **Free** | For-sale *land* (Texas tax auctions) |
-| **RentCast** | `rentcast` | **Free tier** (~50 calls/mo), then paid | Sale listings + rentals |
 | Zillow / Realtor.com | `zillow` / `realtor` | Paid (RapidAPI) | Sale listings + rentals |
 
 ### No API key at all: load a CSV
@@ -281,16 +282,16 @@ export HUD_API_TOKEN=your_free_hud_token      # huduser.gov/portal/dataset/fmr-a
 export MVBA_SALES_URL="https://mvbalaw.com/tax-sales/"
 python -m propertyroi scan --provider mvba,hud
 
-# Cheapest real listings: RentCast free tier (+ HUD rents)
-export RENTCAST_API_KEY=your_rentcast_key     # free tier at rentcast.io
-python -m propertyroi scan --zip 44107 --provider rentcast,hud
-python -m propertyroi str  --zip 44107 --provider rentcast,hud --strategy vacation
+# Real residential listings, no key: a Redfin/Realtor CSV export + free HUD rents
+export PROPERTYROI_CSV=~/Downloads/redfin_search.csv
+python -m propertyroi scan --zip 44107 --provider csv,hud
+python -m propertyroi str  --zip 44107 --provider csv,hud --strategy vacation
 ```
 
-In the GUI, pick one of the **free/cheap** data sources from the dropdown and put
-your free HUD token (and RentCast key) in the **API keys / sources** panel.
+In the GUI, pick one of the **free** data sources from the dropdown and put your
+free HUD token (and CSV path) in the **API keys / sources** panel.
 
-## Using paid data (Zillow, Realtor.com, RentCast)
+## Using paid data (Zillow, Realtor.com)
 
 > **Note on Zillow & Realtor.com.** Neither offers a free public listings API
 > (Zillow retired its public API), and scraping their sites directly violates
@@ -307,10 +308,6 @@ python -m propertyroi scan --zip 78704 --provider realtor
 
 # Pull from BOTH at once, merged and de-duplicated
 python -m propertyroi scan --zip 78704 --provider combined
-
-# RentCast (separate key)
-export RENTCAST_API_KEY=your_key
-python -m propertyroi scan --zip 78704 --provider rentcast
 ```
 
 In Docker, select the default data source with `PROPERTYROI_PROVIDER` and pass
@@ -414,7 +411,7 @@ scripts/
   webapp.py          # stdlib web server: GUI + JSON API
   web/index.html     # single-page GUI (no external dependencies)
   cli.py             # `python -m propertyroi` commands: scan / analyze / serve / test
-  providers/         # JsonProvider (default), Zillow/Realtor/RentCast/MVBA (live), CombinedProvider
+  providers/         # Json/Csv (no key), Zillow/Realtor (paid), MVBA/HUD (free), CombinedProvider
 data/                # sample listings, comps, labeled eval set
 tests/               # unittest suite (run: python -m unittest discover -s tests)
 Dockerfile           # container image (runs `serve`)
