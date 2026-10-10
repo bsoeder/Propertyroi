@@ -1,0 +1,189 @@
+zip,city,state,metro,median_price,median_rent,as_of
+48242,Detroit,MI,"Detroit, MI",79000,1275,2024-sample
+48220,Detroit,MI,"Detroit, MI",81000,1225,2024-sample
+48251,Detroit,MI,"Detroit, MI",109000,1125,2024-sample
+48284,Detroit,MI,"Detroit, MI",80000,1175,2024-sample
+44131,Cleveland,OH,"Cleveland, OH",96000,1275,2024-sample
+44112,Cleveland,OH,"Cleveland, OH",133000,1275,2024-sample
+44171,Cleveland,OH,"Cleveland, OH",118000,1125,2024-sample
+44155,Cleveland,OH,"Cleveland, OH",118000,1125,2024-sample
+43629,Toledo,OH,"Toledo, OH",120000,975,2024-sample
+43606,Toledo,OH,"Toledo, OH",112000,1000,2024-sample
+43672,Toledo,OH,"Toledo, OH",144000,975,2024-sample
+43618,Toledo,OH,"Toledo, OH",133000,1075,2024-sample
+38148,Memphis,TN,"Memphis, TN",134000,1275,2024-sample
+38113,Memphis,TN,"Memphis, TN",143000,1450,2024-sample
+38171,Memphis,TN,"Memphis, TN",155000,1350,2024-sample
+38192,Memphis,TN,"Memphis, TN",164000,1375,2024-sample
+35239,Birmingham,AL,"Birmingham, AL",165000,1175,2024-sample
+35232,Birmingham,AL,"Birmingham, AL",139000,1300,2024-sample
+35224,Birmingham,AL,"Birmingham, AL",141000,1275,2024-sample
+35290,Birmingham,AL,"Birmingham, AL",155000,1175,2024-sample
+39266,Jackson,MS,"Jackson, MS",160000,1250,2024-sample
+39254,Jackson,MS,"Jackson, MS",165000,1275,2024-sample
+39222,Jackson,MS,"Jackson, MS",144000,1175,2024-sample
+39297,Jackson,MS,"Jackson, MS",187000,1225,2024-sample
+45444,Dayton,OH,"Dayton, OH",159000,1225,2024-sample
+45489,Dayton,OH,"Dayton, OH",135000,1050,2024-sample
+45445,Dayton,OH,"Dayton, OH",146000,1200,2024-sample
+45477,Dayton,OH,"Dayton, OH",134000,1200,2024-sample
+63140,St. Louis,MO,"St. Louis, MO",206000,1250,2024-sample
+63183,St. Louis,MO,"St. Louis, MO",177000,1350,2024-sample
+63174,St. Louis,MO,"St. Louis, MO",153000,1300,2024-sample
+63188,St. Louis,MO,"St. Louis, MO",162000,1200,2024-sample
+74108,Tulsa,OK,"Tulsa, OK",211000,1225,2024-sample
+74128,Tulsa,OK,"Tulsa, OK",224000,1250,2024-sample
+74137,Tulsa,OK,"Tulsa, OK",171000,1225,2024-sample
+74117,Tulsa,OK,"Tulsa, OK",179000,1150,2024-sample
+15256,Pittsburgh,PA,"Pittsburgh, PA",208000,1350,2024-sample
+15271,Pittsburgh,PA,"Pittsburgh, PA",244000,1550,2024-sample
+15236,Pittsburgh,PA,"Pittsburgh, PA",187000,1300,2024-sample
+15291,Pittsburgh,PA,"Pittsburgh, PA",194000,1325,2024-sample
+72263,Little Rock,AR,"Little Rock, AR",188000,1200,2024-sample
+72276,Little Rock,AR,"Little Rock, AR",207000,1325,2024-sample
+72224,Little Rock,AR,"Little Rock, AR",191000,1200,2024-sample
+72234,Little Rock,AR,"Little Rock, AR",231000,1425,2024-sample
+73184,Oklahoma City,OK,"Oklahoma City, OK",221000,1525,2024-sample
+73187,Oklahoma City,OK,"Oklahoma City, OK",261000,1450,2024-sample
+73195,Oklahoma City,OK,"Oklahoma City, OK",229000,1375,2024-sample
+73107,Oklahoma City,OK,"Oklahoma City, OK",216000,1400,2024-sample
+46252,Indianapolis,IN,"Indianapolis, IN",276000,1475,2024-sample
+46208,Indianapolis,IN,"Indianapolis, IN",201000,1525,2024-sample
+46225,Indianapolis,IN,"Indianapolis, IN",201000,1525,2024-sample
+46209,Indianapolis,IN,"Indianapolis, IN",238000,1650,2024-sample
+45279,Cincinnati,OH,"Cincinnati, OH",244000,1350,2024-sample
+45204,Cincinnati,OH,"Cincinnati, OH",214000,1400,2024-sample
+45210,Cincinnati,OH,"Cincinnati, OH",223000,1325,2024-sample
+45227,Cincinnati,OH,"Cincinnati, OH",264000,1600,2024-sample
+64160,Kansas City,MO,"Kansas City, MO",213000,1525,2024-sample
+64162,Kansas City,MO,"Kansas City, MO",266000,1450,2024-sample
+64140,Kansas City,MO,"Kansas City, MO",261000,1450,2024-sample
+64111,Kansas City,MO,"Kansas City, MO",218000,1600,2024-sample
+40247,Louisville,KY,"Louisville, KY",270000,1425,2024-sample
+40219,Louisville,KY,"Louisville, KY",217000,1400,2024-sample
+40289,Louisville,KY,"Louisville, KY",200000,1450,2024-sample
+40270,Louisville,KY,"Louisville, KY",236000,1475,2024-sample
+53246,Milwaukee,WI,"Milwaukee, WI",264000,1400,2024-sample
+53229,Milwaukee,WI,"Milwaukee, WI",216000,1550,2024-sample
+53269,Milwaukee,WI,"Milwaukee, WI",281000,1575,2024-sample
+53270,Milwaukee,WI,"Milwaukee, WI",266000,1550,2024-sample
+43295,Columbus,OH,"Columbus, OH",264000,1625,2024-sample
+43230,Columbus,OH,"Columbus, OH",311000,1650,2024-sample
+43226,Columbus,OH,"Columbus, OH",262000,1450,2024-sample
+43267,Columbus,OH,"Columbus, OH",275000,1500,2024-sample
+14293,Buffalo,NY,"Buffalo, NY",211000,1275,2024-sample
+14245,Buffalo,NY,"Buffalo, NY",209000,1275,2024-sample
+14247,Buffalo,NY,"Buffalo, NY",245000,1475,2024-sample
+14211,Buffalo,NY,"Buffalo, NY",263000,1350,2024-sample
+14684,Rochester,NY,"Rochester, NY",252000,1250,2024-sample
+14645,Rochester,NY,"Rochester, NY",215000,1425,2024-sample
+14683,Rochester,NY,"Rochester, NY",200000,1475,2024-sample
+14611,Rochester,NY,"Rochester, NY",219000,1400,2024-sample
+19112,Philadelphia,PA,"Philadelphia, PA",236000,1925,2024-sample
+19193,Philadelphia,PA,"Philadelphia, PA",264000,1625,2024-sample
+19151,Philadelphia,PA,"Philadelphia, PA",212000,1625,2024-sample
+19160,Philadelphia,PA,"Philadelphia, PA",280000,1875,2024-sample
+21219,Baltimore,MD,"Baltimore, MD",269000,1700,2024-sample
+21279,Baltimore,MD,"Baltimore, MD",259000,1625,2024-sample
+21277,Baltimore,MD,"Baltimore, MD",210000,1925,2024-sample
+21261,Baltimore,MD,"Baltimore, MD",268000,1775,2024-sample
+78218,San Antonio,TX,"San Antonio, TX",219000,1400,2024-sample
+78256,San Antonio,TX,"San Antonio, TX",265000,1600,2024-sample
+78225,San Antonio,TX,"San Antonio, TX",248000,1525,2024-sample
+78228,San Antonio,TX,"San Antonio, TX",296000,1350,2024-sample
+77095,Houston,TX,"Houston, TX",283000,1750,2024-sample
+77046,Houston,TX,"Houston, TX",267000,1750,2024-sample
+77059,Houston,TX,"Houston, TX",275000,1625,2024-sample
+77085,Houston,TX,"Houston, TX",277000,1425,2024-sample
+60657,Chicago,IL,"Chicago, IL",324000,1725,2024-sample
+60624,Chicago,IL,"Chicago, IL",256000,1900,2024-sample
+60678,Chicago,IL,"Chicago, IL",254000,1675,2024-sample
+60601,Chicago,IL,"Chicago, IL",314000,1875,2024-sample
+32262,Jacksonville,FL,"Jacksonville, FL",277000,1575,2024-sample
+32214,Jacksonville,FL,"Jacksonville, FL",334000,1650,2024-sample
+32272,Jacksonville,FL,"Jacksonville, FL",311000,1750,2024-sample
+32208,Jacksonville,FL,"Jacksonville, FL",350000,1625,2024-sample
+75279,Dallas,TX,"Dallas, TX",298000,1675,2024-sample
+75265,Dallas,TX,"Dallas, TX",335000,1875,2024-sample
+75278,Dallas,TX,"Dallas, TX",335000,1650,2024-sample
+75266,Dallas,TX,"Dallas, TX",337000,1900,2024-sample
+30334,Atlanta,GA,"Atlanta, GA",299000,1700,2024-sample
+30372,Atlanta,GA,"Atlanta, GA",337000,1675,2024-sample
+30326,Atlanta,GA,"Atlanta, GA",312000,1675,2024-sample
+30358,Atlanta,GA,"Atlanta, GA",366000,1975,2024-sample
+33620,Tampa,FL,"Tampa, FL",347000,1850,2024-sample
+33692,Tampa,FL,"Tampa, FL",317000,1950,2024-sample
+33683,Tampa,FL,"Tampa, FL",397000,1775,2024-sample
+33685,Tampa,FL,"Tampa, FL",415000,1800,2024-sample
+28286,Charlotte,NC,"Charlotte, NC",356000,1750,2024-sample
+28229,Charlotte,NC,"Charlotte, NC",343000,1650,2024-sample
+28221,Charlotte,NC,"Charlotte, NC",341000,1850,2024-sample
+28291,Charlotte,NC,"Charlotte, NC",301000,1775,2024-sample
+32857,Orlando,FL,"Orlando, FL",352000,2000,2024-sample
+32891,Orlando,FL,"Orlando, FL",376000,1775,2024-sample
+32803,Orlando,FL,"Orlando, FL",440000,2075,2024-sample
+32850,Orlando,FL,"Orlando, FL",438000,1775,2024-sample
+89134,Las Vegas,NV,"Las Vegas, NV",380000,1600,2024-sample
+89135,Las Vegas,NV,"Las Vegas, NV",403000,1925,2024-sample
+89106,Las Vegas,NV,"Las Vegas, NV",462000,1650,2024-sample
+89124,Las Vegas,NV,"Las Vegas, NV",362000,1925,2024-sample
+85074,Phoenix,AZ,"Phoenix, AZ",370000,1675,2024-sample
+85064,Phoenix,AZ,"Phoenix, AZ",464000,1825,2024-sample
+85090,Phoenix,AZ,"Phoenix, AZ",368000,2025,2024-sample
+85042,Phoenix,AZ,"Phoenix, AZ",456000,1975,2024-sample
+37211,Nashville,TN,"Nashville, TN",398000,1800,2024-sample
+37278,Nashville,TN,"Nashville, TN",358000,2175,2024-sample
+37229,Nashville,TN,"Nashville, TN",422000,2125,2024-sample
+37209,Nashville,TN,"Nashville, TN",454000,1750,2024-sample
+78791,Austin,TX,"Austin, TX",415000,1825,2024-sample
+78731,Austin,TX,"Austin, TX",525000,2000,2024-sample
+78715,Austin,TX,"Austin, TX",460000,1825,2024-sample
+78721,Austin,TX,"Austin, TX",446000,2025,2024-sample
+95835,Sacramento,CA,"Sacramento, CA",404000,1850,2024-sample
+95845,Sacramento,CA,"Sacramento, CA",485000,2275,2024-sample
+95803,Sacramento,CA,"Sacramento, CA",487000,1950,2024-sample
+95833,Sacramento,CA,"Sacramento, CA",475000,2125,2024-sample
+97284,Portland,OR,"Portland, OR",533000,2125,2024-sample
+97256,Portland,OR,"Portland, OR",613000,1875,2024-sample
+97285,Portland,OR,"Portland, OR",471000,1850,2024-sample
+97264,Portland,OR,"Portland, OR",468000,2125,2024-sample
+80294,Denver,CO,"Denver, CO",664000,2275,2024-sample
+80282,Denver,CO,"Denver, CO",633000,1850,2024-sample
+80218,Denver,CO,"Denver, CO",590000,2225,2024-sample
+80252,Denver,CO,"Denver, CO",550000,1850,2024-sample
+33186,Miami,FL,"Miami, FL",585000,2775,2024-sample
+33149,Miami,FL,"Miami, FL",472000,2475,2024-sample
+33165,Miami,FL,"Miami, FL",518000,2375,2024-sample
+33137,Miami,FL,"Miami, FL",537000,2575,2024-sample
+20071,Washington,DC,"Washington, DC",671000,2275,2024-sample
+20042,Washington,DC,"Washington, DC",545000,2100,2024-sample
+20032,Washington,DC,"Washington, DC",550000,2350,2024-sample
+20005,Washington,DC,"Washington, DC",575000,2200,2024-sample
+11265,New York,NY,"New York, NY",774000,2825,2024-sample
+11201,New York,NY,"New York, NY",716000,3000,2024-sample
+11212,New York,NY,"New York, NY",644000,3150,2024-sample
+11234,New York,NY,"New York, NY",591000,3375,2024-sample
+02197,Boston,MA,"Boston, MA",766000,2925,2024-sample
+02120,Boston,MA,"Boston, MA",761000,3000,2024-sample
+02185,Boston,MA,"Boston, MA",693000,2725,2024-sample
+02192,Boston,MA,"Boston, MA",724000,2650,2024-sample
+98192,Seattle,WA,"Seattle, WA",807000,2525,2024-sample
+98166,Seattle,WA,"Seattle, WA",648000,2375,2024-sample
+98181,Seattle,WA,"Seattle, WA",746000,2525,2024-sample
+98155,Seattle,WA,"Seattle, WA",826000,2525,2024-sample
+90075,Los Angeles,CA,"Los Angeles, CA",951000,2600,2024-sample
+90092,Los Angeles,CA,"Los Angeles, CA",755000,2950,2024-sample
+90088,Los Angeles,CA,"Los Angeles, CA",1054000,2800,2024-sample
+90089,Los Angeles,CA,"Los Angeles, CA",889000,2575,2024-sample
+92103,San Diego,CA,"San Diego, CA",830000,2825,2024-sample
+92181,San Diego,CA,"San Diego, CA",900000,2700,2024-sample
+92169,San Diego,CA,"San Diego, CA",1057000,3225,2024-sample
+92188,San Diego,CA,"San Diego, CA",780000,2975,2024-sample
+94196,San Francisco,CA,"San Francisco, CA",1350000,3525,2024-sample
+94195,San Francisco,CA,"San Francisco, CA",1098000,3450,2024-sample
+94161,San Francisco,CA,"San Francisco, CA",1097000,3375,2024-sample
+94133,San Francisco,CA,"San Francisco, CA",1197000,3525,2024-sample
+95110,San Jose,CA,"San Jose, CA",1550000,3450,2024-sample
+95162,San Jose,CA,"San Jose, CA",1487000,3050,2024-sample
+95188,San Jose,CA,"San Jose, CA",1235000,3200,2024-sample
+95137,San Jose,CA,"San Jose, CA",1538000,3225,2024-sample

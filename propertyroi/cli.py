@@ -118,12 +118,16 @@ def cmd_scan(args) -> int:
         print(f"error: {e}", file=sys.stderr)
         return 2
     analyzer = Analyzer(provider, RentEstimator(), _assumptions_from_args(args))
+    zips = _resolve_metro(args)
+    if zips is False:
+        return 2
     deals = analyzer.find_deals(
         zip_code=args.zip,
         max_price=args.max_price,
         min_beds=args.min_beds,
         property_type=args.type,
         limit=args.limit,
+        zips=zips or None,
     )
     if args.json:
         print(json.dumps([d.to_dict() for d in deals], indent=2))
@@ -210,6 +214,21 @@ def cmd_test(args) -> int:
     return 0
 
 
+def _resolve_metro(args):
+    """Return a list of ZIPs for --metro, [] if no metro given, or False on error."""
+    metro = getattr(args, "metro", None)
+    if not metro:
+        return []
+    from .metros import list_metros, resolve
+    name, zips = resolve(metro)
+    if not zips:
+        avail = ", ".join(list_metros()[:12])
+        print(f"error: unknown metro '{metro}'. Examples: {avail} …", file=sys.stderr)
+        return False
+    print(f"Metro: {name} ({len(zips)} ZIPs)")
+    return zips
+
+
 def _assumptions_from_args(args) -> Assumptions:
     a = Assumptions()
     if getattr(args, "down", None) is not None:
@@ -256,10 +275,14 @@ def cmd_str(args) -> int:
         _print_str_detail(r)
         return 0
     # scan + rank for one strategy
+    zips = _resolve_metro(args)
+    if zips is False:
+        return 2
     deals = analyzer.find_deals(
         strategy=args.strategy, zip_code=args.zip, max_price=args.max_price,
         min_beds=args.min_beds, property_type=args.type,
         adr=args.adr, occupancy=args.occupancy, limit=args.limit,
+        zips=zips or None,
     )
     if args.json:
         print(json.dumps([d.to_dict() for d in deals], indent=2))
@@ -303,6 +326,29 @@ def cmd_str_compare(args) -> int:
     return 0
 
 
+def cmd_rankings(args) -> int:
+    from .rankings import RankingEngine
+    engine = RankingEngine()
+    rows = engine.rank(
+        limit=args.limit, state=args.state, metro=args.metro,
+        max_price=args.max_price, min_price=args.min_price,
+    )
+    if args.json:
+        print(json.dumps([r.to_dict() for r in rows], indent=2))
+        return 0
+    if not rows:
+        print("No ZIPs matched your filters.")
+        return 0
+    print(f"Highest-ROI ZIP codes ({engine.as_of()} data, ranked by gross yield + cap rate):\n")
+    print("rank  zip     metro                     median $     rent   yield    cap     1%     cf/mo   score")
+    print("-" * 104)
+    for i, z in enumerate(rows, 1):
+        print(f"{i:<5} {z.zip_code:<7} {z.metro[:24]:<24} ${z.median_price:>9,.0f} "
+              f"${z.median_rent:>6,.0f} {z.gross_yield:>6.1%} {z.cap_rate:>6.1%} "
+              f"{z.rent_to_price:>6.2%} ${z.monthly_cash_flow:>6,.0f} {z.score:>6.1f}")
+    return 0
+
+
 def _print_str_detail(r) -> None:
     l = r.listing
     print(f"STR analysis - {l.id} ({r.strategy_name})")
@@ -342,6 +388,7 @@ def build_parser() -> argparse.ArgumentParser:
     sp = sub.add_parser("scan", help="find and rank rental deals")
     add_common(sp)
     sp.add_argument("--zip", help="ZIP code to search")
+    sp.add_argument("--metro", help="search a whole metro, e.g. \"Austin, TX\" (sweeps its ZIPs)")
     sp.add_argument("--max-price", type=float, help="maximum list price")
     sp.add_argument("--min-beds", type=int, help="minimum bedrooms")
     sp.add_argument("--type", help="property type filter")
@@ -377,6 +424,7 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--occupancy", type=float, help="occupancy fraction 0..1")
     sp.add_argument("--id", help="analyze a single listing by id (else scan+rank)")
     sp.add_argument("--zip", help="ZIP code to search")
+    sp.add_argument("--metro", help="search a whole metro, e.g. \"Austin, TX\"")
     sp.add_argument("--max-price", type=float, help="maximum list price")
     sp.add_argument("--min-beds", type=int, help="minimum bedrooms")
     sp.add_argument("--type", help="property type filter")
@@ -392,6 +440,15 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--occupancy", type=float, help="occupancy fraction 0..1")
     sp.add_argument("--json", action="store_true", help="output raw JSON")
     sp.set_defaults(func=cmd_str_compare)
+
+    sp = sub.add_parser("rankings", help="highest-ROI ZIP codes in the country")
+    sp.add_argument("--limit", type=int, default=25, help="how many ZIPs (default 25)")
+    sp.add_argument("--state", help="filter to a state (e.g. OH)")
+    sp.add_argument("--metro", help="filter to a metro (substring, e.g. Austin)")
+    sp.add_argument("--max-price", type=float, help="max median home price")
+    sp.add_argument("--min-price", type=float, help="min median home price")
+    sp.add_argument("--json", action="store_true", help="output raw JSON")
+    sp.set_defaults(func=cmd_rankings)
     return p
 
 

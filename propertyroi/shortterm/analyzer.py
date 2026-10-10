@@ -287,12 +287,16 @@ class StrAnalyzer:
         adr: Optional[float] = None,
         occupancy: Optional[float] = None,
         limit: Optional[int] = None,
+        zips: Optional[List[str]] = None,
     ) -> List[StrAnalysis]:
-        listings = self.provider.search_listings(
-            zip_code=zip_code, max_price=max_price,
-            min_beds=min_beds, property_type=property_type,
-        )
-        out = [self.analyze(l, strategy, adr=adr, occupancy=occupancy) for l in listings]
+        targets = list(zips) if zips else [zip_code]
+        out: List[StrAnalysis] = []
+        for z in targets:
+            listings = self.provider.search_listings(
+                zip_code=z, max_price=max_price,
+                min_beds=min_beds, property_type=property_type,
+            )
+            out.extend(self.analyze(l, strategy, adr=adr, occupancy=occupancy) for l in listings)
         out.sort(key=lambda x: x.score, reverse=True)
         return out[:limit] if limit else out
 

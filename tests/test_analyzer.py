@@ -87,6 +87,18 @@ class TestAnalyzer(unittest.TestCase):
         pricey = self.analyzer.analyze(mk_listing(price=500000))
         self.assertGreater(cheap.score, pricey.score)
 
+    def test_find_deals_sweeps_metro_zips(self):
+        # A provider that returns one listing per searched ZIP.
+        class PerZip(DataProvider):
+            def search_listings(self, zip_code=None, **kw):
+                return [Listing(id=f"L-{zip_code}", location=Location(zip_code or "x"),
+                                price=200000, beds=3, baths=2, sqft=1500)]
+            def rental_comps(self, **kw):
+                return [mk_comp()]
+        deals = Analyzer(PerZip(), RentEstimator()).find_deals(zips=["44107", "48201", "78704"])
+        ids = {d.listing.id for d in deals}
+        self.assertEqual(ids, {"L-44107", "L-48201", "L-78704"})
+
     def test_find_deals_caches_comps_per_area(self):
         # A 10-listing scan in one ZIP must make ONE rentals call, not ten.
         provider = CountingProvider(n=10)

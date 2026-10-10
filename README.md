@@ -51,6 +51,40 @@ In the web GUI they're the **General ROI (long-term)** and **Short-term rental**
 tabs; in the STR tab, click any result to compare all strategies for that
 listing.
 
+## Top-ROI ZIP codes & metro search
+
+**Where to look:** the **Top ROI ZIPs** tab (CLI `rankings`, API `/api/rankings`)
+ranks ZIP codes nationwide by gross yield (rent ÷ price) and estimated cap rate —
+the markets where rents are high relative to prices. Filter by state, metro, or
+price; click a ZIP to scan its listings.
+
+```bash
+python -m propertyroi rankings --limit 20
+python -m propertyroi rankings --state OH --limit 10
+python -m propertyroi rankings --metro Austin
+```
+
+**Metro search:** scan a whole metro instead of one ZIP — it sweeps the metro's
+ZIP codes:
+
+```bash
+python -m propertyroi scan --metro "Austin, TX" --provider csv,hud
+python -m propertyroi str  --metro "Nashville, TN" --strategy vacation
+```
+
+The rankings/metros come from `data/zip_market_stats.csv` (zip, city, state,
+metro, median_price, median_rent). The bundled file is a **representative 2024
+snapshot** across ~45 metros so it works out of the box. Rebuild it from **current
+free national data** — Zillow's ZHVI by-ZIP CSV (home values) + HUD FMR (rents) —
+with the refresh script (run it somewhere with internet, e.g. your Pi):
+
+```bash
+export HUD_API_TOKEN=your_free_token
+python scripts/refresh_rankings.py --zhvi Zip_zhvi.csv --hud-token "$HUD_API_TOKEN" --limit-zips 3000
+```
+
+This ranks **markets, not individual deals** — it's where to look, not what to buy.
+
 ## What it does
 
 1. **Explore for-sale listings** filtered by ZIP, price, beds, and type.
@@ -372,6 +406,10 @@ propertyroi/
   analyzer.py        # long-term ROI metrics + deal ranking
   longterm/          # general / long-term ROI engine (RoiAnalyzer)
   shortterm/         # STR engine: strategies.py + analyzer.py (StrAnalyzer)
+  rankings.py        # nationwide ZIP-level ROI rankings (RankingEngine)
+  metros.py          # metro-area -> ZIP resolution (metro search)
+scripts/
+  refresh_rankings.py # rebuild rankings from free Zillow ZHVI + HUD FMR
   tester.py          # accuracy evaluator (leave-one-out)
   webapp.py          # stdlib web server: GUI + JSON API
   web/index.html     # single-page GUI (no external dependencies)
@@ -393,8 +431,12 @@ The server (`python -m propertyroi serve`, port 8000) exposes:
 | `GET /api/health` | liveness + active provider |
 | `GET /api/scan` | ranked deals — params: `zip`, `max_price`, `min_beds`, `type`, `limit`, `provider`, `down`, `rate` |
 | `GET /api/analyze` | one listing (long-term ROI) — params: `id`, `provider`, `down`, `rate` |
-| `GET /api/str` | short-term rental — params: `strategy`, `adr`, `occupancy`, `zip`, `max_price`, `min_beds`, `limit`, `id`, `compare=1` |
+| `GET /api/str` | short-term rental — params: `strategy`, `adr`, `occupancy`, `zip`, `metro`, `max_price`, `min_beds`, `limit`, `id`, `compare=1` |
+| `GET /api/rankings` | top-ROI ZIP codes — params: `limit`, `state`, `metro`, `max_price`, `min_price` |
+| `GET /api/metros` | list of known metros for metro search |
 | `GET /api/test` | accuracy report (JSON) against the labeled data set |
+
+(`/api/scan` and `/api/str` also accept a `metro` param to sweep a metro's ZIPs.)
 
 ```bash
 curl "http://localhost:8000/api/scan?zip=44107&limit=5"

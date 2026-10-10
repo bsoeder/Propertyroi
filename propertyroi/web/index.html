@@ -80,6 +80,7 @@
   <div class="tabs">
     <div class="tab active" data-tab="scan">General ROI (long-term)</div>
     <div class="tab" data-tab="str">Short-term rental</div>
+    <div class="tab" data-tab="rankings">Top ROI ZIPs</div>
     <div class="tab" data-tab="accuracy">Estimator accuracy</div>
   </div>
 
@@ -88,6 +89,7 @@
     <div class="panel">
       <form class="controls" id="scanForm">
         <div><label>ZIP code</label><input name="zip" placeholder="e.g. 44107" /></div>
+        <div><label>Metro (sweeps ZIPs)</label><input name="metro" placeholder="e.g. Austin, TX" /></div>
         <div><label>Max price ($)</label><input name="max_price" type="number" placeholder="any" /></div>
         <div><label>Min beds</label><input name="min_beds" type="number" placeholder="any" /></div>
         <div><label>Property type</label>
@@ -189,6 +191,7 @@
           </select>
         </div>
         <div><label>ZIP code</label><input name="zip" placeholder="e.g. 44107" /></div>
+        <div><label>Metro (sweeps ZIPs)</label><input name="metro" placeholder="e.g. Austin, TX" /></div>
         <div><label>Max price ($)</label><input name="max_price" type="number" placeholder="any" /></div>
         <div><label>Min beds</label><input name="min_beds" type="number" placeholder="any" /></div>
         <div><label>ADR ($/night, optional)</label><input name="adr" type="number" placeholder="estimate" /></div>
@@ -233,6 +236,33 @@
           <thead><tr>
             <th class="l">Score</th><th class="l">Strategy</th><th>Gross rev/yr</th>
             <th>ADR</th><th>Occ</th><th>Cap</th><th>CoC</th><th>Cash flow</th><th>Cash in</th><th class="l">Reg</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOP ROI ZIPS -->
+  <section id="tab-rankings" style="display:none">
+    <div class="panel">
+      <form class="controls" id="rankForm">
+        <div><label>State (optional)</label><input name="state" placeholder="e.g. OH" maxlength="2" /></div>
+        <div><label>Metro (optional)</label><input name="metro" placeholder="e.g. Cleveland" /></div>
+        <div><label>Max median price ($)</label><input name="max_price" type="number" placeholder="any" /></div>
+        <div><label>How many</label><input name="limit" type="number" placeholder="50" /></div>
+        <button class="primary" type="submit">Show top ROI ZIPs</button>
+      </form>
+      <div class="hint" id="rankAsOf">Ranks ZIP codes nationwide by gross yield (rent ÷ price) and estimated cap rate. These are <b>markets</b> to look in, not individual deals. Click a row to scan listings in that ZIP.</div>
+    </div>
+    <div id="rankMsg"></div>
+    <div class="panel" id="rankPanel" style="display:none">
+      <h2 id="rankTitle">Highest-ROI ZIP codes</h2>
+      <div style="overflow-x:auto">
+        <table id="rankTable">
+          <thead><tr>
+            <th class="l">#</th><th class="l">ZIP</th><th class="l">Metro</th>
+            <th>Median price</th><th>Median rent</th><th>Gross yield</th><th>Cap rate</th><th>1% rule</th><th>Score</th>
           </tr></thead>
           <tbody></tbody>
         </table>
@@ -319,7 +349,7 @@ $("#k_save").addEventListener("click", () => {
 });
 
 // Tabs
-const TAB_KEYS = ["scan", "str", "accuracy"];
+const TAB_KEYS = ["scan", "str", "rankings", "accuracy"];
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
   t.classList.add("active");
@@ -482,6 +512,59 @@ $("#runTest").addEventListener("click", async () => {
 });
 function signedTxt(n){ return (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString(); }
 
+// --- Top ROI ZIPs ---------------------------------------------------------
+let rankLoaded = false;
+async function loadRankings(params) {
+  $("#rankMsg").innerHTML = `<div class="msg">Ranking ZIP codes…</div>`;
+  try {
+    const {ok, data} = await fetchJson("/api/rankings?" + params.toString());
+    if (!ok) throw new Error(data.error || "request failed");
+    $("#rankAsOf").innerHTML = `Ranked by gross yield + cap rate · data: <b>${data.as_of}</b> · markets to look in, not individual deals. Click a row to scan listings in that ZIP.`;
+    const tb = $("#rankTable tbody"); tb.innerHTML = "";
+    $("#rankTitle").textContent = `${data.count} highest-ROI ZIP code(s)`;
+    if (!data.count) { $("#rankMsg").innerHTML = `<div class="msg">No ZIPs matched.</div>`; $("#rankPanel").style.display="none"; return; }
+    data.rankings.forEach((z, i) => {
+      const tr = document.createElement("tr");
+      tr.className = "clickable";
+      tr.innerHTML = `
+        <td class="l">${i+1}</td>
+        <td class="l">${z.zip_code}</td>
+        <td class="l">${z.metro}</td>
+        <td>${money(z.median_price)}</td>
+        <td>${money(z.median_rent)}/mo</td>
+        <td class="pos">${pct(z.gross_yield)}</td>
+        <td>${pct(z.cap_rate)}</td>
+        <td>${(z.rent_to_price*100).toFixed(2)}%</td>
+        <td class="l">${scoreBar(z.score)}</td>`;
+      tr.onclick = () => scanZip(z.zip_code);
+      tb.appendChild(tr);
+    });
+    $("#rankPanel").style.display = "";
+    $("#rankMsg").innerHTML = "";
+    rankLoaded = true;
+  } catch (err) {
+    $("#rankMsg").innerHTML = `<div class="msg err">${err.message}</div>`;
+  }
+}
+$("#rankForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const p = new URLSearchParams();
+  for (const [k, v] of fd.entries()) if (v) p.set(k, v);
+  loadRankings(p);
+});
+// Jump from a ranked ZIP into the General ROI scan for that ZIP.
+function scanZip(zip) {
+  document.querySelector('.tab[data-tab="scan"]').click();
+  $('#scanForm [name=zip]').value = zip;
+  $('#scanForm [name=metro]').value = "";
+  $("#scanForm").dispatchEvent(new Event("submit", {cancelable: true}));
+}
+// Lazy-load the rankings the first time the tab is opened.
+document.querySelector('.tab[data-tab="rankings"]').addEventListener("click", () => {
+  if (!rankLoaded) loadRankings(new URLSearchParams({limit: "50"}));
+});
+
 // --- Short-term rental ----------------------------------------------------
 const REG_CHIP = {low:"good", medium:"", high:"bad"};
 function regChip(r){ return `<span class="chip ${REG_CHIP[r]||''}">${r}</span>`; }
@@ -522,7 +605,7 @@ function strRow(d, clickId) {
     <td class="${m.cash_on_cash>=0?'pos':'neg'}">${pct(m.cash_on_cash)}</td>
     <td>${signed(m.monthly_cash_flow)}/mo</td>
     <td class="l">${regChip(d.strategy.regulation_risk)}</td>`;
-  if (clickId) tr.onclick = () => strCompare(clickId);
+  if (clickId) tr.onclick = () => strCompare(clickId, d.listing.location.zip_code);
   return tr;
 }
 
@@ -534,7 +617,7 @@ function renderStr(data) {
   $("#strResultsPanel").style.display = "";
 }
 
-async function strCompare(id) {
+async function strCompare(id, zip) {
   $("#strMsg").innerHTML = `<div class="msg">Comparing strategies for ${id}…</div>`;
   const p = new URLSearchParams({compare: "1", id});
   // Carry the same search context so a live source can re-find the listing.
@@ -543,6 +626,8 @@ async function strCompare(id) {
     const v = fd.get(k);
     if (v) p.set(k, v);
   }
+  // The clicked listing's own ZIP ensures re-find works even for a metro sweep.
+  if (zip) p.set("zip", zip);
   try {
     const {ok, data} = await fetchJson("/api/str?" + p.toString(), {headers: keyHeaders()});
     if (!ok) throw new Error(data.error || "request failed");
