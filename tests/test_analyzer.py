@@ -21,6 +21,26 @@ class FakeProvider(DataProvider):
         return self._c
 
 
+class CountingProvider(DataProvider):
+    """Counts rental_comps calls to verify per-area caching in a scan."""
+
+    def __init__(self, n=10, zip_code="44107"):
+        self.calls = 0
+        self._l = [
+            Listing(id=f"L{i}", location=Location(zip_code), price=150000 + i * 1000,
+                    beds=3, baths=2, sqft=1500)
+            for i in range(n)
+        ]
+
+    def search_listings(self, **kw):
+        return self._l
+
+    def rental_comps(self, zip_code=None, property_type=None):
+        self.calls += 1
+        return [RentalComp(id="c", location=Location(zip_code or "44107"),
+                           monthly_rent=2000, beds=3, baths=2, sqft=1500)]
+
+
 def mk_listing(price=200000, sqft=1500, beds=3):
     return Listing(id="L1", location=Location("10001"), price=price, beds=beds, baths=2, sqft=sqft)
 
@@ -66,6 +86,13 @@ class TestAnalyzer(unittest.TestCase):
         cheap = self.analyzer.analyze(mk_listing(price=150000))
         pricey = self.analyzer.analyze(mk_listing(price=500000))
         self.assertGreater(cheap.score, pricey.score)
+
+    def test_find_deals_caches_comps_per_area(self):
+        # A 10-listing scan in one ZIP must make ONE rentals call, not ten.
+        provider = CountingProvider(n=10)
+        deals = Analyzer(provider, RentEstimator()).find_deals()
+        self.assertEqual(len(deals), 10)
+        self.assertEqual(provider.calls, 1)
 
     def test_find_deals_sorted(self):
         provider = FakeProvider(

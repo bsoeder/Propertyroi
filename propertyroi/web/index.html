@@ -269,6 +269,22 @@ const $ = (s, r=document) => r.querySelector(s);
 const money = n => (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString();
 const pct = n => (n*100).toFixed(1) + "%";
 
+// Fetch JSON with a timeout so the UI never hangs on a slow/rate-limited source.
+async function fetchJson(url, opts = {}, timeoutMs = 90000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const r = await fetch(url, {...opts, signal: ctrl.signal});
+    let data = {};
+    try { data = await r.json(); } catch (e) { /* non-JSON */ }
+    return {ok: r.ok, data};
+  } catch (e) {
+    if (e.name === "AbortError")
+      throw new Error("Timed out — a live source may be slow or rate-limited. Try a Limit, a smaller ZIP, or the sample/CSV source.");
+    throw e;
+  } finally { clearTimeout(t); }
+}
+
 // --- API keys (stored per-browser, sent as request headers) ---------------
 const KEY_FIELDS = {rapidapi: "k_rapidapi", rentcast: "k_rentcast", mvba: "k_mvba", hud: "k_hud", csv: "k_csv"};
 function loadKeys() {
@@ -330,9 +346,8 @@ $("#scanForm").addEventListener("submit", async (e) => {
   for (const [k, v] of fd.entries()) if (v) p.set(k, v);
   saveKeys();
   try {
-    const r = await fetch("/api/scan?" + p.toString(), {headers: keyHeaders()});
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || "request failed");
+    const {ok, data} = await fetchJson("/api/scan?" + p.toString(), {headers: keyHeaders()});
+    if (!ok) throw new Error(data.error || "request failed");
     renderResults(data, fd.get("provider"));
     $("#scanMsg").innerHTML = "";
   } catch (err) {
@@ -482,9 +497,8 @@ $("#strForm").addEventListener("submit", async (e) => {
   for (const [k, v] of fd.entries()) if (v) p.set(k, v);
   saveKeys();
   try {
-    const r = await fetch("/api/str?" + p.toString(), {headers: keyHeaders()});
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || "request failed");
+    const {ok, data} = await fetchJson("/api/str?" + p.toString(), {headers: keyHeaders()});
+    if (!ok) throw new Error(data.error || "request failed");
     renderStr(data);
     $("#strMsg").innerHTML = "";
   } catch (err) {
@@ -529,9 +543,8 @@ async function strCompare(id) {
   if (adr) p.set("adr", adr);
   if (occ) p.set("occupancy", occ);
   try {
-    const r = await fetch("/api/str?" + p.toString(), {headers: keyHeaders()});
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || "request failed");
+    const {ok, data} = await fetchJson("/api/str?" + p.toString(), {headers: keyHeaders()});
+    if (!ok) throw new Error(data.error || "request failed");
     const rows = data.results;
     const l = rows[0].listing, best = rows[0];
     $("#strCompareTitle").textContent = `${l.id} — all strategies (LTR rent ~${money(rows[0].revenue.ltr_monthly_rent)}/mo)`;

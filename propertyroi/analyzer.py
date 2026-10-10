@@ -56,15 +56,25 @@ class Analyzer:
         self.provider = provider
         self.estimator = estimator or RentEstimator()
         self.assumptions = assumptions or Assumptions()
+        # Cache rental comps per (zip, property_type) so a market scan makes one
+        # rentals call per area instead of one per listing (critical for live,
+        # rate-limited providers like RentCast).
+        self._comps_cache: dict = {}
+
+    def _comps_for(self, listing: Listing):
+        key = (listing.location.zip_code, listing.property_type)
+        if key not in self._comps_cache:
+            self._comps_cache[key] = self.provider.rental_comps(
+                zip_code=listing.location.zip_code,
+                property_type=listing.property_type,
+            )
+        return self._comps_cache[key]
 
     # -- single-listing analysis -------------------------------------------
     def analyze(self, listing: Listing, rent_estimate: Optional[RentEstimate] = None) -> InvestmentAnalysis:
         a = self.assumptions
         if rent_estimate is None:
-            comps = self.provider.rental_comps(
-                zip_code=listing.location.zip_code,
-                property_type=listing.property_type,
-            )
+            comps = self._comps_for(listing)
             rent_estimate = self.estimator.estimate(listing, comps)
 
         analysis = InvestmentAnalysis(listing=listing, rent_estimate=rent_estimate, assumptions=a.to_dict())
