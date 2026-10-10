@@ -73,6 +73,10 @@ def _single_with_creds(name: str, creds: dict):
         from .providers.hud import HudFmrProvider
 
         return HudFmrProvider(token=creds.get("hud_token") or None)
+    if name == "csv":
+        from .providers.csv_provider import CsvProvider
+
+        return CsvProvider(path=creds.get("csv_path") or None)
     raise ValueError(f"Unknown provider: {name}")
 
 
@@ -140,6 +144,7 @@ class Handler(BaseHTTPRequestHandler):
             "rentcast_key": self.headers.get("X-RentCast-Key", ""),
             "mvba_url": self.headers.get("X-MVBA-URL", ""),
             "hud_token": self.headers.get("X-HUD-Token", ""),
+            "csv_path": self.headers.get("X-CSV-Path", ""),
         }
 
     # -- routing -----------------------------------------------------------

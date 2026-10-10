@@ -212,10 +212,31 @@ Labeled data format (`data/eval_labeled.json`): each record is a listing plus an
 
 | Source | `--provider` | Cost | Gives |
 |---|---|---|---|
+| **CSV export** | `csv` | **Free, no key** | Real for-sale listings from a Redfin/Realtor CSV download |
 | **HUD Fair Market Rents** | `hud` | **Free** (free token) | Rents by ZIP (studio–4BR), nationwide — no listings |
 | **MVBA tax sales** | `mvba` | **Free** | For-sale *land* (Texas tax auctions) |
 | **RentCast** | `rentcast` | **Free tier** (~50 calls/mo), then paid | Sale listings + rentals |
 | Zillow / Realtor.com | `zillow` / `realtor` | Paid (RapidAPI) | Sale listings + rentals |
+
+### No API key at all: load a CSV
+
+Redfin and Realtor.com let you **download search results as a CSV for free**
+(on Redfin, run a search and click **Download All**). Point PropertyROI at that
+file — no key, no signup:
+
+```bash
+export PROPERTYROI_CSV=~/Downloads/redfin_2026-10-10.csv
+python -m propertyroi scan --provider csv --zip 44107          # listings only
+python -m propertyroi scan --provider csv,hud --zip 44107      # + free HUD rents
+python -m propertyroi str  --provider csv,hud --strategy vacation
+```
+
+Columns are mapped by fuzzy header name, so Redfin's export works as-is. A sample
+is bundled at `data/sample_redfin.csv`. In the GUI, choose **CSV file
+(Redfin/Realtor export)** and set the CSV path in the **API keys / sources**
+panel (it must be a path the server can read — the Docker image ships the sample
+at `/app/data/sample_redfin.csv`). The CSV has for-sale listings only, so combine
+it with `hud` for rent estimates.
 
 HUD and MVBA have no cost at all. Because HUD is rentals-only, combine it with a
 listings source:
@@ -327,6 +348,7 @@ different listing:
 | `MVBA_SALES_URL` | MVBA/county tax-sale listing page or JSON feed | — |
 | `HUD_API_TOKEN` | Free HUD Fair Market Rents token (huduser.gov) | — |
 | `HUD_FMR_YEAR` | FMR data year (optional; latest if unset) | latest |
+| `PROPERTYROI_CSV` | Path to a Redfin/Realtor CSV export (`csv` provider) | — |
 
 The Realtor provider parses several common nesting shapes defensively, so minor
 schema differences between listings do not break it.
