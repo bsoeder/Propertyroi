@@ -117,6 +117,8 @@
         <div><label>Data source</label>
           <select name="provider">
             <option value="json">sample (offline)</option>
+            <option value="csv">CSV file (Redfin/Realtor export — no key)</option>
+            <option value="csv,hud">CSV + HUD rents (no API key)</option>
             <option value="zillow">Zillow (live)</option>
             <option value="realtor">Realtor.com (live)</option>
             <option value="mvba">MVBA tax-sale land (live)</option>
@@ -143,6 +145,8 @@
             <input id="k_mvba" type="text" autocomplete="off" placeholder="https://mvbalaw.com/tax-sales/"></div>
           <div><label>HUD API token (free rents)</label>
             <input id="k_hud" type="password" autocomplete="off" placeholder="HUD_API_TOKEN"></div>
+          <div><label>CSV path (on server)</label>
+            <input id="k_csv" type="text" autocomplete="off" placeholder="/app/data/sample_redfin.csv"></div>
           <div style="align-self:end"><label>&nbsp;</label>
             <button type="button" id="k_save" class="keybtn">Save keys</button></div>
         </div>
@@ -192,6 +196,8 @@
         <div><label>Data source</label>
           <select name="provider">
             <option value="json">sample (offline)</option>
+            <option value="csv">CSV file (Redfin/Realtor export — no key)</option>
+            <option value="csv,hud">CSV + HUD rents (no API key)</option>
             <option value="zillow">Zillow (live)</option>
             <option value="realtor">Realtor.com (live)</option>
             <option value="combined">Zillow + Realtor</option>
@@ -264,7 +270,7 @@ const money = n => (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString();
 const pct = n => (n*100).toFixed(1) + "%";
 
 // --- API keys (stored per-browser, sent as request headers) ---------------
-const KEY_FIELDS = {rapidapi: "k_rapidapi", rentcast: "k_rentcast", mvba: "k_mvba", hud: "k_hud"};
+const KEY_FIELDS = {rapidapi: "k_rapidapi", rentcast: "k_rentcast", mvba: "k_mvba", hud: "k_hud", csv: "k_csv"};
 function loadKeys() {
   try {
     for (const [k, id] of Object.entries(KEY_FIELDS)) {
@@ -285,6 +291,7 @@ function keyHeaders() {
   const c = $("#k_rentcast").value.trim(); if (c) h["X-RentCast-Key"] = c;
   const m = $("#k_mvba").value.trim(); if (m) h["X-MVBA-URL"] = m;
   const u = $("#k_hud").value.trim(); if (u) h["X-HUD-Token"] = u;
+  const cs = $("#k_csv").value.trim(); if (cs) h["X-CSV-Path"] = cs;
   return h;
 }
 loadKeys();

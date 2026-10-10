@@ -2,9 +2,10 @@
 
 from .base import DataProvider
 from .combined import CombinedProvider
+from .csv_provider import CsvProvider
 from .json_provider import JsonProvider
 
-__all__ = ["DataProvider", "JsonProvider", "CombinedProvider"]
+__all__ = ["DataProvider", "JsonProvider", "CsvProvider", "CombinedProvider"]
 
 # Live providers are imported lazily so a missing API key never breaks import.
 for _name, _mod, _cls in (

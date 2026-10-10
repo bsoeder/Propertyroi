@@ -61,6 +61,10 @@ def _single_provider(name: str):
         from .providers.hud import HudFmrProvider
 
         return HudFmrProvider()
+    if name == "csv":
+        from .providers.csv_provider import CsvProvider
+
+        return CsvProvider()
     raise SystemExit(f"Unknown provider: {name}")
 
 
@@ -81,8 +85,8 @@ def _make_provider(name: str):
     return _single_provider(name)
 
 
-_PROVIDER_CHOICES = ["json", "rentcast", "zillow", "realtor", "mvba", "hud",
-                     "combined", "realtor,mvba", "mvba,hud", "rentcast,hud"]
+_PROVIDER_CHOICES = ["json", "csv", "rentcast", "zillow", "realtor", "mvba", "hud",
+                     "combined", "realtor,mvba", "mvba,hud", "rentcast,hud", "csv,hud"]
 
 
 def _fmt_analysis_row(a) -> str:
