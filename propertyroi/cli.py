@@ -14,9 +14,6 @@ Examples
     # Evaluate the estimator's accuracy against labeled data
     python -m propertyroi test
 
-    # Use live RentCast data (needs RENTCAST_API_KEY)
-    python -m propertyroi scan --zip 78704 --provider rentcast
-
     # Pull live data from Zillow or Realtor.com (needs RAPIDAPI_KEY)
     python -m propertyroi scan --zip 78704 --provider zillow
     python -m propertyroi scan --zip 78704 --provider realtor
@@ -41,10 +38,6 @@ from .tester import AccuracyTester, load_labeled
 def _single_provider(name: str):
     if name == "json":
         return JsonProvider()
-    if name == "rentcast":
-        from .providers.rentcast import RentCastProvider
-
-        return RentCastProvider()
     if name == "zillow":
         from .providers.zillow import ZillowProvider
 
@@ -85,8 +78,8 @@ def _make_provider(name: str):
     return _single_provider(name)
 
 
-_PROVIDER_CHOICES = ["json", "csv", "rentcast", "zillow", "realtor", "mvba", "hud",
-                     "combined", "realtor,mvba", "mvba,hud", "rentcast,hud", "csv,hud"]
+_PROVIDER_CHOICES = ["json", "csv", "zillow", "realtor", "mvba", "hud",
+                     "combined", "realtor,mvba", "mvba,hud", "csv,hud"]
 
 
 def _fmt_analysis_row(a) -> str:

@@ -9,7 +9,6 @@ __all__ = ["DataProvider", "JsonProvider", "CsvProvider", "CombinedProvider"]
 
 # Live providers are imported lazily so a missing API key never breaks import.
 for _name, _mod, _cls in (
-    ("RentCastProvider", ".rentcast", "RentCastProvider"),
     ("ZillowProvider", ".zillow", "ZillowProvider"),
     ("RealtorProvider", ".realtor", "RealtorProvider"),
     ("MvbaProvider", ".mvba", "MvbaProvider"),

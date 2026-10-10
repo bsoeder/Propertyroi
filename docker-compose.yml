@@ -6,11 +6,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      # Data source: json (default, offline) | zillow | realtor | combined | rentcast
+      # Data source: json (default, offline) | csv | zillow | realtor | combined
+      #              | mvba | hud | comma-combos (e.g. csv,hud or mvba,hud)
       PROPERTYROI_PROVIDER: "${PROPERTYROI_PROVIDER:-json}"
-      # API keys for live providers (only needed if you switch provider).
+      # API key for the paid live providers (Zillow/Realtor via RapidAPI).
       RAPIDAPI_KEY: "${RAPIDAPI_KEY:-}"
-      RENTCAST_API_KEY: "${RENTCAST_API_KEY:-}"
       # MVBA tax-sale land: a county/MVBA listing page or JSON feed URL.
       MVBA_SALES_URL: "${MVBA_SALES_URL:-}"
       # HUD Fair Market Rents (free rental data): a free token from huduser.gov.

@@ -126,8 +126,6 @@
             <option value="mvba">MVBA tax-sale land (live)</option>
             <option value="realtor,mvba">Realtor + MVBA land</option>
             <option value="combined">Zillow + Realtor</option>
-            <option value="rentcast">RentCast (free tier)</option>
-            <option value="rentcast,hud">RentCast + HUD rents (free/cheap)</option>
             <option value="mvba,hud">MVBA land + HUD rents (free)</option>
             <option value="hud">HUD rents only (free, no listings)</option>
           </select>
@@ -141,8 +139,6 @@
         <div class="keys-grid">
           <div><label>RapidAPI key (Zillow / Realtor)</label>
             <input id="k_rapidapi" type="password" autocomplete="off" placeholder="X-RapidAPI-Key"></div>
-          <div><label>RentCast API key</label>
-            <input id="k_rentcast" type="password" autocomplete="off" placeholder="RentCast key"></div>
           <div><label>MVBA sales URL</label>
             <input id="k_mvba" type="text" autocomplete="off" placeholder="https://mvbalaw.com/tax-sales/"></div>
           <div><label>HUD API token (free rents)</label>
@@ -204,8 +200,7 @@
             <option value="zillow">Zillow (live)</option>
             <option value="realtor">Realtor.com (live)</option>
             <option value="combined">Zillow + Realtor</option>
-            <option value="rentcast">RentCast (free tier)</option>
-            <option value="rentcast,hud">RentCast + HUD rents (free/cheap)</option>
+            <option value="mvba,hud">MVBA land + HUD rents (free)</option>
           </select>
         </div>
         <div><label>Limit</label><input name="limit" type="number" placeholder="all" /></div>
@@ -316,7 +311,7 @@ async function fetchJson(url, opts = {}, timeoutMs = 90000) {
 }
 
 // --- API keys (stored per-browser, sent as request headers) ---------------
-const KEY_FIELDS = {rapidapi: "k_rapidapi", rentcast: "k_rentcast", mvba: "k_mvba", hud: "k_hud", csv: "k_csv"};
+const KEY_FIELDS = {rapidapi: "k_rapidapi", mvba: "k_mvba", hud: "k_hud", csv: "k_csv"};
 function loadKeys() {
   try {
     for (const [k, id] of Object.entries(KEY_FIELDS)) {
@@ -334,7 +329,6 @@ function saveKeys() {
 function keyHeaders() {
   const h = {};
   const r = $("#k_rapidapi").value.trim(); if (r) h["X-RapidAPI-Key"] = r;
-  const c = $("#k_rentcast").value.trim(); if (c) h["X-RentCast-Key"] = c;
   const m = $("#k_mvba").value.trim(); if (m) h["X-MVBA-URL"] = m;
   const u = $("#k_hud").value.trim(); if (u) h["X-HUD-Token"] = u;
   const cs = $("#k_csv").value.trim(); if (cs) h["X-CSV-Path"] = cs;

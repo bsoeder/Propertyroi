@@ -16,7 +16,6 @@ services:
     environment:
       PROPERTYROI_PROVIDER: "${PROPERTYROI_PROVIDER:-json}"
       RAPIDAPI_KEY: "${RAPIDAPI_KEY:-}"
-      RENTCAST_API_KEY: "${RENTCAST_API_KEY:-}"
       MVBA_SALES_URL: "${MVBA_SALES_URL:-}"
       HUD_API_TOKEN: "${HUD_API_TOKEN:-}"
       PROPERTYROI_CSV: "${PROPERTYROI_CSV:-/app/data/sample_redfin.csv}"

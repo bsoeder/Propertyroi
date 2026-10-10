@@ -46,17 +46,13 @@ def _make_provider(name: str):
 def _single_with_creds(name: str, creds: dict):
     """Build one provider, letting per-request credentials override the env.
 
-    `creds` may carry rapidapi_key, rentcast_key, mvba_url — each falls back to
+    `creds` may carry rapidapi_key, mvba_url, hud_token, csv_path — each falls back to
     the server environment when blank, so keys can come from the GUI or the env.
     """
     from .providers import JsonProvider
 
     if name == "json":
         return JsonProvider()
-    if name == "rentcast":
-        from .providers.rentcast import RentCastProvider
-
-        return RentCastProvider(api_key=creds.get("rentcast_key") or None)
     if name == "zillow":
         from .providers.zillow import ZillowProvider
 
@@ -149,7 +145,6 @@ class Handler(BaseHTTPRequestHandler):
         """Per-request credentials from headers (never logged, unlike query params)."""
         return {
             "rapidapi_key": self.headers.get("X-RapidAPI-Key", ""),
-            "rentcast_key": self.headers.get("X-RentCast-Key", ""),
             "mvba_url": self.headers.get("X-MVBA-URL", ""),
             "hud_token": self.headers.get("X-HUD-Token", ""),
             "csv_path": self.headers.get("X-CSV-Path", ""),

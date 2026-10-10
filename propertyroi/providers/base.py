@@ -5,7 +5,7 @@ A provider supplies two things the analyzer needs:
   * rental comps used to estimate rent.
 
 Concrete providers implement these against a data source: bundled sample JSON,
-a local file, or a real estate API (Zillow/RentCast/Realtor/etc.). Keeping this
+a local file, or a real estate API (Zillow/Realtor/etc.). Keeping this
 behind an interface lets the rest of the app stay source-agnostic and lets the
 accuracy tester swap in fixtures.
 """
