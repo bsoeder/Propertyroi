@@ -139,13 +139,17 @@ class StrAnalyzer:
         self.provider = provider
         self.estimator = estimator or RentEstimator()
         self.assumptions = assumptions or StrAssumptions()
+        # Cache comps per (zip, type) so a scan makes one rentals call per area.
+        self._comps_cache: dict = {}
 
     # -- long-term rent helper (for the fallback + arbitrage lease cost) ----
     def _ltr_monthly(self, listing: Listing) -> tuple:
-        comps = self.provider.rental_comps(
-            zip_code=listing.location.zip_code, property_type=listing.property_type
-        )
-        est = self.estimator.estimate(listing, comps)
+        key = (listing.location.zip_code, listing.property_type)
+        if key not in self._comps_cache:
+            self._comps_cache[key] = self.provider.rental_comps(
+                zip_code=listing.location.zip_code, property_type=listing.property_type
+            )
+        est = self.estimator.estimate(listing, self._comps_cache[key])
         return est.monthly_rent, est.confidence
 
     # -- single analysis ----------------------------------------------------
