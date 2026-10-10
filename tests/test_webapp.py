@@ -101,6 +101,27 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(d["mode"], "compare")
         self.assertEqual(len(d["results"]), 5)
 
+    def test_rankings(self):
+        status, body = self._get("/api/rankings?limit=5")
+        self.assertEqual(status, 200)
+        d = json.loads(body)
+        self.assertEqual(d["count"], 5)
+        self.assertIn("gross_yield", d["rankings"][0])
+        # sorted best-first
+        self.assertGreaterEqual(d["rankings"][0]["score"], d["rankings"][4]["score"])
+
+    def test_rankings_state_filter(self):
+        status, body = self._get("/api/rankings?state=OH&limit=0")
+        self.assertEqual(status, 200)
+        d = json.loads(body)
+        self.assertTrue(all(r["state"] == "OH" for r in d["rankings"]))
+        self.assertGreater(d["count"], 0)
+
+    def test_metros_list(self):
+        status, body = self._get("/api/metros")
+        self.assertEqual(status, 200)
+        self.assertIn("Austin, TX", json.loads(body)["metros"])
+
     def test_str_compare_requires_id(self):
         status, _ = self._get("/api/str?compare=1")
         self.assertEqual(status, 400)

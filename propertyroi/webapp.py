@@ -109,6 +109,14 @@ def _first(qs: dict, key: str) -> Optional[str]:
     return v[0] if v else None
 
 
+def _zips_for_metro(metro: Optional[str]):
+    if not metro:
+        return None
+    from .metros import resolve
+    _name, zips = resolve(metro)
+    return zips or None
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "PropertyROI/0.1"
 
@@ -165,6 +173,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._api_test(qs)
             if route == "/api/str":
                 return self._api_str(qs)
+            if route == "/api/rankings":
+                return self._api_rankings(qs)
+            if route == "/api/metros":
+                from .metros import list_metros
+                return self._send_json({"metros": list_metros()})
             return self._send_json({"error": f"unknown route {route}"}, 404)
         except ValueError as e:
             # e.g. missing API key or bad numeric param
@@ -190,6 +203,7 @@ class Handler(BaseHTTPRequestHandler):
             min_beds=int(min_beds) if min_beds else None,
             property_type=_first(qs, "type"),
             limit=int(limit) if limit else None,
+            zips=_zips_for_metro(_first(qs, "metro")),
         )
         self._send_json({"count": len(deals), "deals": [d.to_dict() for d in deals]})
 
@@ -248,9 +262,26 @@ class Handler(BaseHTTPRequestHandler):
             property_type=_first(qs, "type"),
             adr=adr, occupancy=occ,
             limit=int(limit) if limit else None,
+            zips=_zips_for_metro(_first(qs, "metro")),
         )
         self._send_json({"mode": "scan", "strategy": strategy,
                          "count": len(deals), "deals": [d.to_dict() for d in deals]})
+
+    def _api_rankings(self, qs):
+        from .rankings import RankingEngine
+        engine = RankingEngine()
+        limit = _first(qs, "limit")
+        max_price = _first(qs, "max_price")
+        min_price = _first(qs, "min_price")
+        rows = engine.rank(
+            limit=int(limit) if limit else 50,
+            state=_first(qs, "state"),
+            metro=_first(qs, "metro"),
+            max_price=float(max_price) if max_price else None,
+            min_price=float(min_price) if min_price else None,
+        )
+        self._send_json({"as_of": engine.as_of(), "count": len(rows),
+                         "rankings": [r.to_dict() for r in rows]})
 
     @staticmethod
     def _find_listing(provider, listing_id, zip_code):

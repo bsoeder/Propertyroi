@@ -174,15 +174,23 @@ class Analyzer:
         min_beds: Optional[int] = None,
         property_type: Optional[str] = None,
         limit: Optional[int] = None,
+        zips: Optional[List[str]] = None,
     ) -> List[InvestmentAnalysis]:
-        """Search listings and return analyses ranked best-first by score."""
-        listings = self.provider.search_listings(
-            zip_code=zip_code,
-            max_price=max_price,
-            min_beds=min_beds,
-            property_type=property_type,
-        )
-        analyses = [self.analyze(l) for l in listings]
+        """Search listings and return analyses ranked best-first by score.
+
+        Pass `zips` (e.g. a metro's ZIP codes) to sweep several areas at once;
+        otherwise searches the single `zip_code`.
+        """
+        targets = list(zips) if zips else [zip_code]
+        analyses: List[InvestmentAnalysis] = []
+        for z in targets:
+            listings = self.provider.search_listings(
+                zip_code=z,
+                max_price=max_price,
+                min_beds=min_beds,
+                property_type=property_type,
+            )
+            analyses.extend(self.analyze(l) for l in listings)
         analyses.sort(key=lambda x: x.score, reverse=True)
         return analyses[:limit] if limit else analyses
 
