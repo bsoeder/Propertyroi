@@ -536,12 +536,13 @@ function renderStr(data) {
 
 async function strCompare(id) {
   $("#strMsg").innerHTML = `<div class="msg">Comparing strategies for ${id}…</div>`;
-  const adr = $('#strForm [name=adr]').value.trim();
-  const occ = $('#strForm [name=occupancy]').value.trim();
-  const prov = $('#strForm [name=provider]').value;
-  const p = new URLSearchParams({compare: "1", id, provider: prov});
-  if (adr) p.set("adr", adr);
-  if (occ) p.set("occupancy", occ);
+  const p = new URLSearchParams({compare: "1", id});
+  // Carry the same search context so a live source can re-find the listing.
+  const fd = new FormData($("#strForm"));
+  for (const k of ["provider", "zip", "max_price", "min_beds", "type", "adr", "occupancy"]) {
+    const v = fd.get(k);
+    if (v) p.set(k, v);
+  }
   try {
     const {ok, data} = await fetchJson("/api/str?" + p.toString(), {headers: keyHeaders()});
     if (!ok) throw new Error(data.error || "request failed");
