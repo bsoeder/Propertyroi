@@ -20,6 +20,10 @@ sheets differ slightly. Listings carry no rental comps.
     export MVBA_SALES_URL="https://mvbalaw.com/tax-sales/"
     python -m propertyroi scan --provider mvba
 
+Set ``MVBA_COUNTY`` (or pass ``county=...`` / the GUI's county box) to scope an
+index crawl to a single county and return that whole county's tracts. Requests
+use a browser User-Agent so the site's CDN doesn't reject them.
+
 PDF bid sheets require the optional ``pdfplumber`` dependency
 (``pip install pdfplumber``); it is imported lazily, so HTML/JSON sources work
 without it. Everything else uses only the standard library.
@@ -31,6 +35,7 @@ import io
 import json
 import os
 import re
+import urllib.error
 import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
@@ -41,7 +46,13 @@ from .base import DataProvider
 
 _ACRE_RE = re.compile(r"([\d,]+(?:\.\d+)?)\s*(?:ac\b|acre)", re.IGNORECASE)
 _NUM_RE = re.compile(r"[-+]?[\d,]+(?:\.\d+)?")
-_HREF_RE = re.compile(r'href\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)
+
+# mvbalaw.com sits behind a CDN that 403s the default urllib User-Agent, which
+# surfaced in the app as "not accessible". Send a normal browser UA + headers.
+_UA = (
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+)
 
 
 def _to_float(v) -> Optional[float]:
@@ -134,13 +145,46 @@ class _TableParser(HTMLParser):
             self._cell.append(data)
 
 
+class _LinkParser(HTMLParser):
+    """Collect (href, anchor_text) pairs from every ``<a>`` on a page.
+
+    Anchor text matters: MVBA's index labels each county link with the county
+    name, so a county filter can match on the visible text even when the target
+    URL is an opaque uploads path.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.links: List[tuple] = []
+        self._href: Optional[str] = None
+        self._text: Optional[List[str]] = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "a":
+            href = dict(attrs).get("href")
+            self._href = href
+            self._text = [] if href else None
+
+    def handle_endtag(self, tag):
+        if tag == "a" and self._href is not None:
+            text = " ".join(" ".join(self._text or []).split())
+            self.links.append((self._href, text))
+            self._href = None
+            self._text = None
+
+    def handle_data(self, data):
+        if self._text is not None:
+            self._text.append(data)
+
+
 class MvbaProvider(DataProvider):
     def __init__(
         self,
         url: Optional[str] = None,
         timeout: float = 25.0,
         crawl: bool = True,
-        max_sheets: int = 40,
+        max_sheets: int = 60,
+        county: Optional[str] = None,
     ):
         self.url = url or os.environ.get("MVBA_SALES_URL", "")
         if not self.url:
@@ -151,13 +195,22 @@ class MvbaProvider(DataProvider):
         self.timeout = timeout
         self.crawl = crawl
         self.max_sheets = max_sheets
+        # Optional county filter: scopes an index crawl to one county and only
+        # returns that county's tracts. Blank = every county on the index.
+        self.county = (county or os.environ.get("MVBA_COUNTY", "")).strip()
+        self._visited: set = set()
 
     # -- fetch (mockable in tests) -----------------------------------------
     def _fetch(self, url: Optional[str] = None) -> tuple:
         """Return (raw_bytes, content_type) for a URL."""
         target = url or self.url
         req = urllib.request.Request(
-            target, headers={"Accept": "application/json, text/html, application/pdf"}
+            target,
+            headers={
+                "User-Agent": _UA,
+                "Accept": "application/json, text/html, application/pdf, */*",
+                "Accept-Language": "en-US,en;q=0.9",
+            },
         )
         with urllib.request.urlopen(req, timeout=self.timeout) as resp:
             ctype = resp.headers.get("Content-Type", "")
@@ -173,7 +226,7 @@ class MvbaProvider(DataProvider):
             or data[:5] == b"%PDF-"
         )
 
-    def _parse(self, data: bytes, ctype: str, url: str, allow_crawl: bool) -> List[Listing]:
+    def _parse(self, data: bytes, ctype: str, url: str, crawl_depth: int, top: bool = False) -> List[Listing]:
         if self._is_pdf(data, ctype, url):
             return self._parse_pdf(data, url)
         text = data.decode("utf-8", errors="replace") if isinstance(data, bytes) else data
@@ -182,10 +235,10 @@ class MvbaProvider(DataProvider):
             return self._parse_json(json.loads(text), url)
         # HTML: first try to read a bid table on this page itself.
         listings = self._parse_html(text, url)
-        if listings or not allow_crawl:
+        if listings or crawl_depth <= 0:
             return listings
-        # Otherwise treat it as a county index and crawl the bid-sheet links.
-        return self._crawl_index(text, url)
+        # Otherwise treat it as an index and crawl its bid-sheet / county links.
+        return self._crawl_index(text, url, crawl_depth, top)
 
     # -- shared table row mapping ------------------------------------------
     def _row_to_listing(self, rec: dict, idx: int, url: str) -> Optional[Listing]:
@@ -286,34 +339,60 @@ class MvbaProvider(DataProvider):
         return out
 
     # -- index crawling ----------------------------------------------------
-    def _bid_sheet_links(self, html: str, base: str) -> List[str]:
-        """Absolute URLs on an index page that look like county bid sheets."""
-        seen = set()
-        links: List[str] = []
-        for href in _HREF_RE.findall(html):
+    def _collect_links(self, html: str, base: str, county: str) -> List[str]:
+        """Absolute URLs on an index page worth following.
+
+        Picks both direct bid sheets (PDF / uploads) and per-county sub-pages
+        (``/tax-sales/<county>/``) so a two-level site — index -> county page ->
+        bid sheet — is fully crawled. When ``county`` is set, links are filtered
+        to that county by anchor text or URL slug; if nothing matches (the index
+        doesn't name counties in links) all links are kept and county filtering
+        falls to the listing level.
+        """
+        parser = _LinkParser()
+        parser.feed(html)
+        base_norm = base.rstrip("/").lower()
+        want = _normalize(county) if county else ""
+        matched: List[str] = []
+        allcand: List[str] = []
+        seen: set = set()
+        for href, text in parser.links:
+            if not href:
+                continue
             absu = urllib.parse.urljoin(base, href)
             low = absu.lower()
-            if absu == base or absu.rstrip("/") == base.rstrip("/"):
+            if not low.startswith(("http://", "https://")):
                 continue
-            if (
+            if low.rstrip("/") == base_norm or absu in seen:
+                continue
+            is_sheet = (
                 low.split("?")[0].endswith(".pdf")
                 or "taxupload" in low
                 or "bidsheet" in low
                 or "bid-sheet" in low
-                or ("tax" in low and "sale" in low and low != base.lower())
-            ):
-                if absu not in seen:
-                    seen.add(absu)
-                    links.append(absu)
+            )
+            is_county_page = not is_sheet and ("tax-sale" in low or "taxsale" in low)
+            if not (is_sheet or is_county_page):
+                continue
+            seen.add(absu)
+            allcand.append(absu)
+            if want and (want in _normalize(text) or want in _normalize(low)):
+                matched.append(absu)
+        links = matched if (want and matched) else allcand
         return links[: self.max_sheets]
 
-    def _crawl_index(self, html: str, base: str) -> List[Listing]:
+    def _crawl_index(self, html: str, base: str, crawl_depth: int, top: bool) -> List[Listing]:
         out: List[Listing] = []
-        for link in self._bid_sheet_links(html, base):
+        # Apply the county filter only at the top-level index: once inside a
+        # county's own page, take every sheet it links to.
+        county = self.county if (top and self.county) else ""
+        for link in self._collect_links(html, base, county):
+            if link in self._visited:
+                continue
+            self._visited.add(link)
             try:
                 data, ctype = self._fetch(link)
-                # Do not recurse into further indexes (allow_crawl=False).
-                out.extend(self._parse(data, ctype, link, allow_crawl=False))
+                out.extend(self._parse(data, ctype, link, crawl_depth - 1))
             except Exception:
                 continue  # skip a broken/blocked sheet, keep the rest
         return out
@@ -328,13 +407,30 @@ class MvbaProvider(DataProvider):
     ) -> List[Listing]:
         if property_type and property_type != "land":
             return []
-        data, ctype = self._fetch()
-        listings = self._parse(data, ctype, self.url, allow_crawl=self.crawl)
+        self._visited = {self.url}
+        try:
+            data, ctype = self._fetch()
+        except urllib.error.HTTPError as e:
+            raise ValueError(
+                f"MVBA source returned HTTP {e.code} for {self.url}. The site may be "
+                "blocking automated requests, or the URL moved — check the link."
+            ) from e
+        except urllib.error.URLError as e:
+            raise ValueError(f"MVBA source not reachable ({self.url}): {e.reason}") from e
+        # Two-level crawl (index -> county page -> bid sheet) when pointed at an
+        # index; a direct bid sheet is parsed in place.
+        depth = 2 if self.crawl else 0
+        listings = self._parse(data, ctype, self.url, crawl_depth=depth, top=True)
+        want_county = _normalize(self.county) if self.county else ""
         out = []
         for l in listings:
             if max_price is not None and l.price > max_price:
                 continue
             if zip_code and l.location.zip_code and l.location.zip_code != zip_code:
+                continue
+            # County filter: drop tracts whose stated county doesn't match. Keep
+            # listings with no county so a sheet that omits the column survives.
+            if want_county and l.location.county and want_county not in _normalize(l.location.county):
                 continue
             out.append(l)
         return out

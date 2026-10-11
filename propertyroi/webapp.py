@@ -64,7 +64,7 @@ def _single_with_creds(name: str, creds: dict):
     if name == "mvba":
         from .providers.mvba import MvbaProvider
 
-        return MvbaProvider(url=creds.get("mvba_url") or None)
+        return MvbaProvider(url=creds.get("mvba_url") or None, county=creds.get("mvba_county") or None)
     if name == "hud":
         from .providers.hud import HudFmrProvider
 
@@ -146,6 +146,7 @@ class Handler(BaseHTTPRequestHandler):
         return {
             "rapidapi_key": self.headers.get("X-RapidAPI-Key", ""),
             "mvba_url": self.headers.get("X-MVBA-URL", ""),
+            "mvba_county": self.headers.get("X-MVBA-County", ""),
             "hud_token": self.headers.get("X-HUD-Token", ""),
             "csv_path": self.headers.get("X-CSV-Path", ""),
         }
