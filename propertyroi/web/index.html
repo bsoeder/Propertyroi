@@ -141,6 +141,8 @@
             <input id="k_rapidapi" type="password" autocomplete="off" placeholder="X-RapidAPI-Key"></div>
           <div><label>MVBA sales URL</label>
             <input id="k_mvba" type="text" autocomplete="off" placeholder="https://mvbalaw.com/tax-sales/"></div>
+          <div><label>MVBA county (optional)</label>
+            <input id="k_mvba_county" type="text" autocomplete="off" placeholder="e.g. Collin — blank = all counties"></div>
           <div><label>HUD API token (free rents)</label>
             <input id="k_hud" type="password" autocomplete="off" placeholder="HUD_API_TOKEN"></div>
           <div><label>CSV path (on server)</label>
@@ -311,7 +313,7 @@ async function fetchJson(url, opts = {}, timeoutMs = 90000) {
 }
 
 // --- API keys (stored per-browser, sent as request headers) ---------------
-const KEY_FIELDS = {rapidapi: "k_rapidapi", mvba: "k_mvba", hud: "k_hud", csv: "k_csv"};
+const KEY_FIELDS = {rapidapi: "k_rapidapi", mvba: "k_mvba", mvba_county: "k_mvba_county", hud: "k_hud", csv: "k_csv"};
 function loadKeys() {
   try {
     for (const [k, id] of Object.entries(KEY_FIELDS)) {
@@ -330,6 +332,7 @@ function keyHeaders() {
   const h = {};
   const r = $("#k_rapidapi").value.trim(); if (r) h["X-RapidAPI-Key"] = r;
   const m = $("#k_mvba").value.trim(); if (m) h["X-MVBA-URL"] = m;
+  const mc = $("#k_mvba_county").value.trim(); if (mc) h["X-MVBA-County"] = mc;
   const u = $("#k_hud").value.trim(); if (u) h["X-HUD-Token"] = u;
   const cs = $("#k_csv").value.trim(); if (cs) h["X-CSV-Path"] = cs;
   return h;

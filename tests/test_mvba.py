@@ -122,17 +122,70 @@ class TestMvbaProvider(unittest.TestCase):
         self.assertEqual(listings[0].id, "R12345")
         self.assertEqual(listings[0].url, sheet_url)
 
-    def test_bid_sheet_link_extraction(self):
+    def test_collect_links_extraction(self):
         p = MvbaProvider(url="https://mvbalaw.com/tax-sales/")
         html = ('<a href="/wp-content/TaxUploads/x.pdf">a</a>'
                 '<a href="https://mvbalaw.com/tax-sales/">self</a>'
                 '<a href="/privacy">no</a>'
                 '<a href="/county-tax-sale-info">yes</a>')
-        links = p._bid_sheet_links(html, "https://mvbalaw.com/tax-sales/")
+        links = p._collect_links(html, "https://mvbalaw.com/tax-sales/", "")
         self.assertIn("https://mvbalaw.com/wp-content/TaxUploads/x.pdf", links)
         self.assertIn("https://mvbalaw.com/county-tax-sale-info", links)
         self.assertNotIn("https://mvbalaw.com/privacy", links)
         self.assertNotIn("https://mvbalaw.com/tax-sales/", links)  # skip self
+
+    def test_collect_links_county_filter(self):
+        p = MvbaProvider(url="https://mvbalaw.com/tax-sales/")
+        html = ('<a href="/tax-sales/collin/">Collin County</a>'
+                '<a href="/tax-sales/dallas/">Dallas County</a>')
+        base = "https://mvbalaw.com/tax-sales/"
+        only = p._collect_links(html, base, "Collin")
+        self.assertEqual(only, ["https://mvbalaw.com/tax-sales/collin/"])
+        # No county named -> keep every candidate.
+        both = p._collect_links(html, base, "")
+        self.assertEqual(len(both), 2)
+        # A county with no matching link falls back to all links (filtered later).
+        fallback = p._collect_links(html, base, "Travis")
+        self.assertEqual(len(fallback), 2)
+
+    def test_county_two_level_crawl(self):
+        # index -> per-county page -> bid sheet, scoped to one county.
+        index_html = ('<html><body>'
+                      '<a href="/tax-sales/collin/">Collin County</a>'
+                      '<a href="/tax-sales/dallas/">Dallas County</a>'
+                      '</body></html>')
+        collin_page = '<a href="/wp-content/TaxUploads/CollinBidSheet.html">Bid sheet</a>'
+        collin_sheet = MVBA_HTML.replace("Fayette", "Collin")
+        base = "https://mvbalaw.com/tax-sales/"
+        collin_url = "https://mvbalaw.com/tax-sales/collin/"
+        sheet_url = "https://mvbalaw.com/wp-content/TaxUploads/CollinBidSheet.html"
+        p = MvbaProvider(url=base, county="Collin")
+        fetched = []
+
+        def fake_fetch(url=None):
+            u = url or base
+            fetched.append(u)
+            if u == base:
+                return index_html.encode(), "text/html"
+            if u == collin_url:
+                return collin_page.encode(), "text/html"
+            if u == sheet_url:
+                return collin_sheet.encode(), "text/html"
+            raise AssertionError(f"unexpected fetch {u}")
+
+        p._fetch = fake_fetch  # type: ignore
+        listings = p.search_listings()
+        self.assertEqual(len(listings), 2)  # from the Collin sheet
+        # The Dallas county page must never be fetched when scoped to Collin.
+        self.assertNotIn("https://mvbalaw.com/tax-sales/dallas/", fetched)
+
+    def test_listing_level_county_filter(self):
+        # MVBA_HTML rows are all Fayette; scoping to Bell drops them.
+        p = self._provider(MVBA_HTML, "text/html")
+        p.county = "Bell"
+        self.assertEqual(p.search_listings(), [])
+        p.county = "Fayette"
+        self.assertEqual(len(p.search_listings()), 2)
 
     def test_pdf_without_pdfplumber_raises_clear_error(self):
         import builtins
